@@ -1,0 +1,317 @@
+/****************************************************
+ *  PUSH: adiciona um JSON à fila de um pedido
+ *  Retorna:
+ *    true  -> já existia fila para esse pedido
+ *    false -> fila foi criada agora
+ *
+ *  NOVO MODELO (SHIFT POR COLUNAS):
+ *    - Coluna A: numeroPedido (fixo)
+ *    - Colunas B, C, D, ...: cada célula armazena UM JSON (stringificado)
+ *    - A ordem da fila é da ESQUERDA para a DIREITA (B -> C -> D -> ...)
+ ****************************************************/
+function pushFila(numeroPedido, novoJson) {
+
+  numeroPedido = String(numeroPedido); // garante consistência
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000); // espera até 20s por outro processo terminar
+
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('fila');
+    var dados = sheet.getDataRange().getValues();
+    var filaExistente = false;
+
+    for (var i = 1; i < dados.length; i++) {
+      if (String(dados[i][0]) === numeroPedido) {
+        // Linha do pedido encontrada: adicionar o novo JSON na primeira coluna vazia à direita
+        filaExistente = true;
+
+        var lastCol = sheet.getLastColumn();
+        var rowValues = sheet.getRange(i + 1, 1, 1, lastCol).getValues()[0];
+
+        var targetCol = 2; // começa em B
+        var encontrouVazia = false;
+        for (var c = 2; c <= lastCol; c++) {
+          if (!rowValues[c - 1]) { // primeira célula vazia
+            targetCol = c;
+            encontrouVazia = true;
+        break;
+      }
+    }
+
+        if (!encontrouVazia) {
+          // Nenhuma célula vazia entre as colunas existentes -> usar a próxima coluna
+          targetCol = lastCol + 1;
+        }
+
+        sheet.getRange(i + 1, targetCol).setValue(JSON.stringify(novoJson));
+        return true; // já existia fila para esse pedido
+      }
+    }
+
+    // Se não encontrou o pedido, cria nova linha: A = numeroPedido, B = primeiro JSON
+    sheet.appendRow([numeroPedido, JSON.stringify(novoJson)]);
+    return false; // fila criada agora
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/****************************************************
+ *  POP: remove o primeiro JSON da fila de um pedido
+ *       Se a fila ficar vazia, remove a linha inteira
+ *       e RETORNA o JSON removido
+ *
+ *  NOVO MODELO (SHIFT POR COLUNAS):
+ *    - Procura o primeiro JSON nas colunas B..Z
+ *    - Remove esse valor e "anda" a fila para a esquerda:
+ *        B <- C, C <- D, D <- E, ...
+ *    - A coluna A (numeroPedido) nunca é alterada
+ ****************************************************/
+function popFila(numeroPedido) {
+
+  numeroPedido = String(numeroPedido);
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('fila');
+    var dados = sheet.getDataRange().getValues();
+
+    for (var i = 1; i < dados.length; i++) {
+      if (String(dados[i][0]) === numeroPedido) {
+        var lastCol = sheet.getLastColumn();
+        var rowValues = sheet.getRange(i + 1, 1, 1, lastCol).getValues()[0];
+
+        // Encontrar a primeira coluna NÃO vazia entre B..lastCol
+        var firstJsonCol = -1;
+        for (var c = 2; c <= lastCol; c++) {
+          if (rowValues[c - 1]) {
+            firstJsonCol = c;
+            break;
+          }
+        }
+
+        if (firstJsonCol === -1) {
+          // Não há JSONs nessa linha (fila vazia para esse pedido)
+          return null;
+        }
+
+        // JSON removido é o da primeira coluna preenchida
+        var removidoStr = rowValues[firstJsonCol - 1];
+        var removido;
+        try {
+          removido = JSON.parse(removidoStr);
+        } catch (err) {
+          // Se não conseguir fazer parse, retorna a string bruta mesmo
+          removido = removidoStr;
+        }
+
+        // Descobrir a última coluna realmente preenchida (com JSON)
+        var lastFilledCol = -1;
+        for (var c2 = lastCol; c2 >= 2; c2--) {
+          if (rowValues[c2 - 1]) {
+            lastFilledCol = c2;
+            break;
+          }
+        }
+
+        // "Andar" a fila para a esquerda: B <- C, C <- D, ...
+        if (lastFilledCol !== -1) {
+          for (var c3 = firstJsonCol + 1; c3 <= lastFilledCol; c3++) {
+            var val = rowValues[c3 - 1];
+            sheet.getRange(i + 1, c3 - 1).setValue(val);
+          }
+          // Limpar a última posição que foi "puxada" para a esquerda
+          sheet.getRange(i + 1, lastFilledCol).clearContent();
+        } else {
+          // Só havia um JSON, que já foi removido; nada a shiftar
+          sheet.getRange(i + 1, firstJsonCol).clearContent();
+        }
+
+        // Verificar se a linha ficou sem nenhum JSON (todas colunas B..lastCol vazias)
+        var aindaTemFila = false;
+        var rowAfter = sheet.getRange(i + 1, 1, 1, sheet.getLastColumn()).getValues()[0];
+        for (var c4 = 2; c4 <= sheet.getLastColumn(); c4++) {
+          if (rowAfter[c4 - 1]) {
+            aindaTemFila = true;
+            break;
+          }
+        }
+
+        if (!aindaTemFila) {
+          // Não há mais JSONs para esse pedido -> remover a linha
+          sheet.deleteRow(i + 1);
+        }
+
+        return removido;
+      }
+    }
+
+    return null;
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/****************************************************
+ *  GET: retorna o primeiro JSON da fila de um pedido
+ *  Uso:
+ *    GET .../exec?numeroPedido=1543330509898-01
+ *
+ *  NOVO MODELO:
+ *    - Lê a linha do pedido e procura o primeiro JSON nas colunas B..Z
+ *    - Retorna esse JSON (SEM remover da fila)
+ ****************************************************/
+function doGet(e) {
+  try {
+    if (!e || !e.parameter || !e.parameter.numeroPedido) {
+      return _responderJson({
+        status: "erro",
+        mensagem: 'Parâmetro "numeroPedido" é obrigatório no GET.'
+      });
+    }
+
+    var numeroPedido = String(e.parameter.numeroPedido);
+
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('fila');
+    var dados = sheet.getDataRange().getValues();
+
+    if (dados.length <= 1) {
+      return _responderJson({
+        status: "vazia",
+        mensagem: "Nenhum pedido na fila."
+      });
+    }
+
+    // procura o pedido específico
+    for (var i = 1; i < dados.length; i++) {
+      if (String(dados[i][0]) === numeroPedido) {
+        var lastCol = sheet.getLastColumn();
+        var rowValues = sheet.getRange(i + 1, 1, 1, lastCol).getValues()[0];
+
+        var primeiroJson = null;
+        for (var c = 2; c <= lastCol; c++) {
+          if (rowValues[c - 1]) {
+            try {
+              primeiroJson = JSON.parse(rowValues[c - 1]);
+            } catch (err) {
+              primeiroJson = rowValues[c - 1];
+            }
+            break;
+          }
+        }
+
+        return _responderJson({
+          status: primeiroJson ? "ok" : "fila_vazia",
+          mensagem: primeiroJson
+            ? "Primeiro JSON da fila retornado com sucesso."
+            : "Fila do pedido existe, mas está vazia.",
+          numeroPedido: numeroPedido,
+          primeiroJson: primeiroJson
+        });
+      }
+    }
+
+    // não encontrou o pedido
+    return _responderJson({
+      status: "nao_encontrado",
+      mensagem: "Pedido não encontrado na fila.",
+      numeroPedido: numeroPedido
+    });
+
+  } catch (err) {
+    return _responderJson({
+      status: "erro",
+      mensagem: "Erro ao processar GET.",
+      detalhe: String(err)
+    });
+  }
+}
+
+
+/****************************************************
+ *  POST: recebe requisição e executa ação:
+ *    acao = "push" -> adiciona JSON na fila
+ *    acao = "pop"  -> remove e retorna o primeiro JSON
+ ****************************************************/
+function doPost(e) {
+  try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return _responderJson({
+        status: "erro",
+        mensagem: "Corpo da requisição vazio."
+      });
+    }
+
+    var body = JSON.parse(e.postData.contents);
+
+    var acao = body.acao;
+    var numeroPedido = String(body.numeroPedido);
+
+    if (!acao || !numeroPedido) {
+      return _responderJson({
+        status: "erro",
+        mensagem: 'Campos "acao" e "numeroPedido" são obrigatórios.'
+      });
+    }
+
+    if (acao === "push") {
+
+      if (body.json === undefined) {
+        return _responderJson({
+          status: "erro",
+          mensagem: 'Para "push", o campo "json" é obrigatório.'
+        });
+      }
+
+      var jaExistia = pushFila(numeroPedido, body.json);
+
+      return _responderJson({
+        status: "ok",
+        mensagem: jaExistia
+          ? "JSON adicionado em fila já existente."
+          : "JSON adicionado em nova fila.",
+        numeroPedido: numeroPedido,
+        jaExistiaFila: jaExistia
+      });
+    }
+
+    if (acao === "pop") {
+      var removido = popFila(numeroPedido);
+
+      return _responderJson({
+        status: removido ? "ok" : "vazio_ou_inexistente",
+        numeroPedido: numeroPedido,
+        jsonRemovido: removido
+      });
+    }
+
+    return _responderJson({
+      status: "erro",
+      mensagem: 'Ação inválida. Use "push" ou "pop".'
+    });
+
+  } catch (err) {
+    return _responderJson({
+      status: "erro",
+      mensagem: "Erro interno.",
+      detalhe: String(err)
+    });
+  }
+}
+
+
+/****************************************************
+ *  Função auxiliar para responder JSON
+ ****************************************************/
+function _responderJson(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}

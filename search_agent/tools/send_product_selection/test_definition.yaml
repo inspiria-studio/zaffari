@@ -1,0 +1,20 @@
+name: "Send Product Selection Test"
+description: "Test definition for send_product_selection tool"
+parameters:
+  - order_id:
+      description: "ID do pedido"
+      type: "string"
+      example: "1601550511156-01"
+  - product_id_original:
+      description: "ID do produto original que foi removido"
+      type: "string"
+      example: "1001916"
+  - product_id_replacement:
+      description: "ID do produto escolhido como substituto"
+      type: "string"
+      example: "1002591"
+  - quantity:
+      description: "Quantidade do produto substituto"
+      type: "number"
+      example: 1
+

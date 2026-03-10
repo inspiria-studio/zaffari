@@ -1,0 +1,4093 @@
+{
+    "products": [
+        {
+            "cacheId": "sp-1008308",
+            "productId": "1008308",
+            "description": "Arroz Branco Tio João 1kg",
+            "productName": "Arroz Branco Tio João 1kg",
+            "productReference": "1008308",
+            "linkText": "arroz-branco-tio-joao-1kg-1008308",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-branco-tio-joao-1kg-1008308/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 9.9,
+                    "lowPrice": 9.9
+                },
+                "listPrice": {
+                    "highPrice": 9.9,
+                    "lowPrice": 9.9
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020101"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020101"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "155",
+                    "name": "Zaffari e Bourbon Card"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                },
+                {
+                    "id": "178",
+                    "name": "Revista Primavera"
+                },
+                {
+                    "id": "181",
+                    "name": "Banner Mercearia"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "155",
+                    "name": "Zaffari e Bourbon Card"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "Acima de 1kg"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Tradicional"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "1.000"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020101"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 9.9,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.9,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 9.9,
+                                "ListPrice": 9.9,
+                                "spotPrice": 9.9,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 9.9,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "156284",
+                            "cacheId": "156284",
+                            "imageTag": "",
+                            "imageLabel": "1008308-00.jpg",
+                            "imageText": "1008308-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/156284/1008308-00.jpg?v=637509075360970000"
+                        }
+                    ],
+                    "itemId": "1008308",
+                    "name": "Arroz Branco Tio João 1kg",
+                    "nameComplete": "Arroz Branco Tio João 1kg",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1008308"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500020110",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522886400000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1008770",
+            "productId": "1008770",
+            "description": "Arroz Integral Orgânico Tio João 1kg",
+            "productName": "Arroz Integral Orgânico Tio João 1kg",
+            "productReference": "1008770",
+            "linkText": "arroz-integral-organico-tio-joao-1kg-1008770",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-integral-organico-tio-joao-1kg-1008770/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 9.28,
+                    "lowPrice": 9.28
+                },
+                "listPrice": {
+                    "highPrice": 9.28,
+                    "lowPrice": 9.28
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Caixa"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020401"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Caixa"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020401"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "157",
+                    "name": "Orgânicos"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "157",
+                    "name": "Orgânicos"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "Acima de 1kg"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Caixa"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Integral"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "1.000"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020401"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 9.28,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 9.28,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 9.28,
+                                "ListPrice": 9.28,
+                                "spotPrice": 9.28,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 9.28,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "156334",
+                            "cacheId": "156334",
+                            "imageTag": "",
+                            "imageLabel": "1008770-00.jpg",
+                            "imageText": "1008770-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/156334/1008770-00.jpg?v=637509079276130000"
+                        }
+                    ],
+                    "itemId": "1008770",
+                    "name": "Arroz Integral Orgânico Tio João 1kg",
+                    "nameComplete": "Arroz Integral Orgânico Tio João 1kg",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1008770"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500034827",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522886400000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1021713",
+            "productId": "1021713",
+            "description": "Arroz Carreteiro Cozinha & Sabor Tio João 175g",
+            "productName": "Arroz Carreteiro Cozinha & Sabor Tio João 175g",
+            "productReference": "1021713",
+            "linkText": "arroz-carreteiro-cozinha-e-sabor-tio-joao-175g-1021713",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-carreteiro-cozinha-e-sabor-tio-joao-175g-1021713/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 6.39,
+                    "lowPrice": 6.39
+                },
+                "listPrice": {
+                    "highPrice": 6.39,
+                    "lowPrice": 6.39
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.175"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.175"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "de 101g a 500g"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Tradicional"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "0.175"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020601"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 6.39,
+                                "ListPrice": 6.39,
+                                "spotPrice": 6.39,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 6.39,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "157534",
+                            "cacheId": "157534",
+                            "imageTag": "",
+                            "imageLabel": "1021713-00.jpg",
+                            "imageText": "1021713-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/157534/1021713-00.jpg?v=637510686043270000"
+                        }
+                    ],
+                    "itemId": "1021713",
+                    "name": "Arroz Carreteiro Cozinha & Sabor Tio João 175g",
+                    "nameComplete": "Arroz Carreteiro Cozinha & Sabor Tio João 175g",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1021713"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500012672",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1025322",
+            "productId": "1025322",
+            "description": "Arroz Integral Parboilizado Tio João 1kg",
+            "productName": "Arroz Integral Parboilizado Tio João 1kg",
+            "productReference": "1025322",
+            "linkText": "arroz-integral-parboilizado-tio-joao-1kg-1025322",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-integral-parboilizado-tio-joao-1kg-1025322/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                },
+                "listPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020301"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "Acima de 1kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "1.000"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020301"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "Acima de 1kg"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Integral"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "1.000"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020301"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 5.29,
+                                "ListPrice": 5.29,
+                                "spotPrice": 5.29,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 5.29,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "157278",
+                            "cacheId": "157278",
+                            "imageTag": "",
+                            "imageLabel": "1025322-00.jpg",
+                            "imageText": "1025322-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/157278/1025322-00.jpg?v=637510666451330000"
+                        }
+                    ],
+                    "itemId": "1025322",
+                    "name": "Arroz Integral Parboilizado Tio João 1kg",
+                    "nameComplete": "Arroz Integral Parboilizado Tio João 1kg",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1025322"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500018483",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1043558",
+            "productId": "1043558",
+            "description": "Arroz Integral 7 Grãos Tio João 500g",
+            "productName": "Arroz Integral 7 Grãos Tio João 500g",
+            "productReference": "1043558",
+            "linkText": "arroz-integral-7-graos-tio-joao-500g-1043558",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-integral-7-graos-tio-joao-500g-1043558/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 7.29,
+                    "lowPrice": 7.29
+                },
+                "listPrice": {
+                    "highPrice": 7.29,
+                    "lowPrice": 7.29
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.500"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020301"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.500"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020301"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Integral"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "0.500"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020301"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 7.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 7.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 7.29,
+                                "ListPrice": 7.29,
+                                "spotPrice": 7.29,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 7.29,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "158202",
+                            "cacheId": "158202",
+                            "imageTag": "",
+                            "imageLabel": "1043558-00.jpg",
+                            "imageText": "1043558-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/158202/1043558-00.jpg?v=637514233428300000"
+                        },
+                        {
+                            "imageId": "158203",
+                            "cacheId": "158203",
+                            "imageTag": "",
+                            "imageLabel": "1043558-01.jpg",
+                            "imageText": "1043558-01.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/158203/1043558-01.jpg?v=637514233440330000"
+                        }
+                    ],
+                    "itemId": "1043558",
+                    "name": "Arroz Integral 7 Grãos Tio João 500g",
+                    "nameComplete": "Arroz Integral 7 Grãos Tio João 500g",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1043558"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500045434",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1040880",
+            "productId": "1040880",
+            "description": "Arroz à Grega Cozinha Fácil Tio João 250g",
+            "productName": "Arroz à Grega Cozinha Fácil Tio João 250g",
+            "productReference": "1040880",
+            "linkText": "arroz-a-grega-cozinha-facil-tio-joao-250g-1040880",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-a-grega-cozinha-facil-tio-joao-250g-1040880/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                },
+                "listPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.250"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.250"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "de 101g a 500g"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Tradicional"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "0.250"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020601"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 5.29,
+                                "ListPrice": 5.29,
+                                "spotPrice": 5.29,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 5.29,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "158063",
+                            "cacheId": "158063",
+                            "imageTag": "",
+                            "imageLabel": "1040880-00.jpg",
+                            "imageText": "1040880-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/158063/1040880-00.jpg?v=637514222533870000"
+                        }
+                    ],
+                    "itemId": "1040880",
+                    "name": "Arroz à Grega Cozinha Fácil Tio João 250g",
+                    "nameComplete": "Arroz à Grega Cozinha Fácil Tio João 250g",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1040880"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500025337",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1038506",
+            "productId": "1038506",
+            "description": "Arroz Integral + Vegetais Cozinha Fácil Tio João 200g",
+            "productName": "Arroz Integral + Vegetais Cozinha Fácil Tio João 200g",
+            "productReference": "1038506",
+            "linkText": "arroz-integral-vegetais-cozinha-facil-tio-joao-200g-1038506",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-integral-vegetais-cozinha-facil-tio-joao-200g-1038506/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                },
+                "listPrice": {
+                    "highPrice": 5.29,
+                    "lowPrice": 5.29
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.200"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Integral"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.200"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "de 101g a 500g"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Integral"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "0.200"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020601"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 5.29,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 5.29,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 5.29,
+                                "ListPrice": 5.29,
+                                "spotPrice": 5.29,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 5.29,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "157932",
+                            "cacheId": "157932",
+                            "imageTag": "",
+                            "imageLabel": "1038506-00.jpg",
+                            "imageText": "1038506-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/157932/1038506-00.jpg?v=637514212651800000"
+                        }
+                    ],
+                    "itemId": "1038506",
+                    "name": "Arroz Integral + Vegetais Cozinha Fácil Tio João 200g",
+                    "nameComplete": "Arroz Integral + Vegetais Cozinha Fácil Tio João 200g",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1038506"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [],
+                    "ean": "7893500089629",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": []
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        },
+        {
+            "cacheId": "sp-1021704",
+            "productId": "1021704",
+            "description": "Arroz com Galinha Cozinha & Sabor Tio João 175g",
+            "productName": "Arroz com Galinha Cozinha & Sabor Tio João 175g",
+            "productReference": "1021704",
+            "linkText": "arroz-com-galinha-cozinha-e-sabor-tio-joao-175g-1021704",
+            "brand": "Tio João",
+            "brandId": 2000862,
+            "link": "/arroz-com-galinha-cozinha-e-sabor-tio-joao-175g-1021704/p",
+            "categories": [
+                "/Mercearia/Grãos e Cereais/Arroz/",
+                "/Mercearia/Grãos e Cereais/",
+                "/Mercearia/"
+            ],
+            "categoryId": "3001",
+            "priceRange": {
+                "sellingPrice": {
+                    "highPrice": 6.39,
+                    "lowPrice": 6.39
+                },
+                "listPrice": {
+                    "highPrice": 6.39,
+                    "lowPrice": 6.39
+                }
+            },
+            "specificationGroups": [
+                {
+                    "originalName": "Filtros Nível 2 - Grãos e Cereais",
+                    "name": "Filtros Nível 2 - Grãos e Cereais",
+                    "specifications": [
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Filtros Nível 1 - Mercearia",
+                    "name": "Filtros Nível 1 - Mercearia",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "Especificações",
+                    "name": "Especificações",
+                    "specifications": [
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.175"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "originalName": "allSpecifications",
+                    "name": "allSpecifications",
+                    "specifications": [
+                        {
+                            "originalName": "Tipo de Alimento",
+                            "name": "Tipo de Alimento",
+                            "values": [
+                                "Grãos e Cereais"
+                            ]
+                        },
+                        {
+                            "originalName": "Seleção",
+                            "name": "Seleção",
+                            "values": [
+                                "Arroz"
+                            ]
+                        },
+                        {
+                            "originalName": "Peso",
+                            "name": "Peso",
+                            "values": [
+                                "de 101g a 500g"
+                            ]
+                        },
+                        {
+                            "originalName": "Embalagem",
+                            "name": "Embalagem",
+                            "values": [
+                                "Plástica"
+                            ]
+                        },
+                        {
+                            "originalName": "Preferência de consumo",
+                            "name": "Preferência de consumo",
+                            "values": [
+                                "Tradicional"
+                            ]
+                        },
+                        {
+                            "originalName": "Apresentação",
+                            "name": "Apresentação",
+                            "values": [
+                                "Grãos"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1050",
+                            "name": "Corredor 1050",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "UM_Cont",
+                            "name": "UM_Cont",
+                            "values": [
+                                "Kg"
+                            ]
+                        },
+                        {
+                            "originalName": "Cont_liq",
+                            "name": "Cont_liq",
+                            "values": [
+                                "0.175"
+                            ]
+                        },
+                        {
+                            "originalName": "Merchandise_Group",
+                            "name": "Merchandise_Group",
+                            "values": [
+                                "M08020601"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1350",
+                            "name": "Corredor 1350",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "Corredor 1240",
+                            "name": "Corredor 1240",
+                            "values": [
+                                "38C"
+                            ]
+                        },
+                        {
+                            "originalName": "sellerId",
+                            "name": "sellerId",
+                            "values": [
+                                "1"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "skuSpecifications": [],
+            "productClusters": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "146",
+                    "name": "Almoço"
+                },
+                {
+                    "id": "148",
+                    "name": "Jantar"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "clusterHighlights": [
+                {
+                    "id": "137",
+                    "name": "Novidades"
+                },
+                {
+                    "id": "169",
+                    "name": "Simples"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Tipo de Alimento",
+                    "originalName": "Tipo de Alimento",
+                    "values": [
+                        "Grãos e Cereais"
+                    ]
+                },
+                {
+                    "name": "Seleção",
+                    "originalName": "Seleção",
+                    "values": [
+                        "Arroz"
+                    ]
+                },
+                {
+                    "name": "Peso",
+                    "originalName": "Peso",
+                    "values": [
+                        "de 101g a 500g"
+                    ]
+                },
+                {
+                    "name": "Embalagem",
+                    "originalName": "Embalagem",
+                    "values": [
+                        "Plástica"
+                    ]
+                },
+                {
+                    "name": "Preferência de consumo",
+                    "originalName": "Preferência de consumo",
+                    "values": [
+                        "Tradicional"
+                    ]
+                },
+                {
+                    "name": "Apresentação",
+                    "originalName": "Apresentação",
+                    "values": [
+                        "Grãos"
+                    ]
+                },
+                {
+                    "name": "Corredor 1050",
+                    "originalName": "Corredor 1050",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "UM_Cont",
+                    "originalName": "UM_Cont",
+                    "values": [
+                        "Kg"
+                    ]
+                },
+                {
+                    "name": "Cont_liq",
+                    "originalName": "Cont_liq",
+                    "values": [
+                        "0.175"
+                    ]
+                },
+                {
+                    "name": "Merchandise_Group",
+                    "originalName": "Merchandise_Group",
+                    "values": [
+                        "M08020601"
+                    ]
+                },
+                {
+                    "name": "Corredor 1350",
+                    "originalName": "Corredor 1350",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "Corredor 1240",
+                    "originalName": "Corredor 1240",
+                    "values": [
+                        "38C"
+                    ]
+                },
+                {
+                    "name": "sellerId",
+                    "originalName": "sellerId",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "sellers": [
+                        {
+                            "sellerId": "1",
+                            "sellerName": "Zaffari.com.br",
+                            "addToCartLink": "",
+                            "sellerDefault": true,
+                            "commertialOffer": {
+                                "DeliverySlaSamplesPerRegion": {},
+                                "DeliverySlaSamples": [],
+                                "AvailableQuantity": 10000,
+                                "discountHighlights": [],
+                                "Installments": [
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "American Express",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "American Express à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Visa",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Visa à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Diners",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Diners à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Mastercard",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Mastercard à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Elo",
+                                        "PaymentSystemGroupName": "creditCardPaymentGroup",
+                                        "Name": "Elo à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pix",
+                                        "PaymentSystemGroupName": "instantPaymentPaymentGroup",
+                                        "Name": "Pix à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento em Loja",
+                                        "PaymentSystemGroupName": "custom201PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Pagamento Cartão Zaffari em Loja",
+                                        "PaymentSystemGroupName": "custom202PaymentGroupPaymentGroup",
+                                        "Name": "Pagamento Cartão Zaffari em Loja à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "Zaffari Card e Bourbon Card",
+                                        "PaymentSystemGroupName": "customPrivate_401PaymentGroup",
+                                        "Name": "Zaffari Card e Bourbon Card à vista"
+                                    },
+                                    {
+                                        "Value": 6.39,
+                                        "InterestRate": 0,
+                                        "TotalValuePlusInterestRate": 6.39,
+                                        "NumberOfInstallments": 1,
+                                        "PaymentSystemName": "WH Google Pay",
+                                        "PaymentSystemGroupName": "WH Google PayPaymentGroup",
+                                        "Name": "WH Google Pay à vista"
+                                    }
+                                ],
+                                "Price": 6.39,
+                                "ListPrice": 6.39,
+                                "spotPrice": 6.39,
+                                "taxPercentage": 0,
+                                "PriceWithoutDiscount": 6.39,
+                                "Tax": 0,
+                                "GiftSkuIds": [],
+                                "BuyTogether": [],
+                                "ItemMetadataAttachment": [],
+                                "RewardValue": 0,
+                                "PriceValidUntil": "2027-02-11T12:36:31Z",
+                                "GetInfoErrorMessage": null,
+                                "CacheVersionUsedToCallCheckout": "",
+                                "teasers": []
+                            }
+                        }
+                    ],
+                    "images": [
+                        {
+                            "imageId": "157528",
+                            "cacheId": "157528",
+                            "imageTag": "",
+                            "imageLabel": "1021704-00.jpg",
+                            "imageText": "1021704-00.jpg",
+                            "imageUrl": "https://hmlzaffari.vtexassets.com/arquivos/ids/157528/1021704-00.jpg?v=637510685529730000"
+                        }
+                    ],
+                    "itemId": "1021704",
+                    "name": "Arroz com Galinha Cozinha & Sabor Tio João 175g",
+                    "nameComplete": "Arroz com Galinha Cozinha & Sabor Tio João 175g",
+                    "complementName": "",
+                    "referenceId": [
+                        {
+                            "Key": "RefId",
+                            "Value": "1021704"
+                        }
+                    ],
+                    "measurementUnit": "un",
+                    "unitMultiplier": 1,
+                    "variations": [
+                        {
+                            "name": "activeSubscriptions",
+                            "values": [
+                                "teste-semanal"
+                            ]
+                        }
+                    ],
+                    "ean": "7893500012689",
+                    "modalType": "",
+                    "videos": [],
+                    "attachments": [],
+                    "isKit": false,
+                    "attributes": [],
+                    "activeSubscriptions": [
+                        "teste-semanal"
+                    ]
+                }
+            ],
+            "categoriesIds": [
+                "/1001/2001/3001/",
+                "/1001/2001/",
+                "/1001/"
+            ],
+            "releaseDate": 1522972800000,
+            "metaTagDescription": "",
+            "origin": "intelligent-search",
+            "productTitle": ""
+        }
+    ],
+    "recordsFiltered": 8,
+    "correction": {
+        "misspelled": false
+    },
+    "fuzzy": "0",
+    "operator": "and",
+    "translated": false,
+    "pagination": {
+        "count": 1,
+        "current": {
+            "index": 1,
+            "proxyUrl": "search/trade-policy/1?an=hmlzaffari&query=ARROZ TIO JOAO&hide-unavailable-items=true&operator=and&fuzzy=0&page=1"
+        },
+        "before": [],
+        "after": [],
+        "perPage": 24,
+        "next": {
+            "index": 0
+        },
+        "previous": {
+            "index": 0
+        },
+        "first": {
+            "index": 0
+        },
+        "last": {
+            "index": 0
+        }
+    },
+    "options": {
+        "sorts": [],
+        "counts": [],
+        "deliveryPromisesEnabled": false
+    },
+    "searchId": "1a1ad2cc0620446f8324b97cbecf80ce"
+}

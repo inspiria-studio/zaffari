@@ -1,0 +1,41 @@
+tests:
+    test_1:
+        parameters:
+            product_name: "Presunto Cozido Fatiado Sadia"
+            sku: "1002134"
+            price: 6.99
+            quantity: 2
+            unit: "un"
+            unit_multiplier: 1.0
+    test_2:
+        parameters:
+            product_name: "Alho"
+            sku: "1001236"
+            price: 39.9
+            quantity: 1
+            unit: "kg"
+            unit_multiplier: 1.0
+    test_3:
+        parameters:
+            product_name: "Cacho de Banana Prata"
+            sku: "1001609"
+            price: 5.43
+            quantity: 0.779
+            unit: "kg"
+            unit_multiplier: 0.779
+    test_4:
+        parameters:
+            product_name: "Água Mineral Naturale 500ml"
+            sku: "1045330"
+            price: 1.35
+            quantity: 3
+            unit: "un"
+            unit_multiplier: 1.0
+    test_5:
+        parameters:
+            product_name: "Limão Taiti"
+            sku: "1001162"
+            price: 1.13
+            quantity: 0.26
+            unit: "kg"
+            unit_multiplier: 0.13
