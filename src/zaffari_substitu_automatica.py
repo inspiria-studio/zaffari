@@ -6,13 +6,13 @@ import base64
 import httpx
 import time
 
-# Imports do Google removidos - não são necessários para o funcionamento
 #68f8d2aed00e9b8c9a3d98b5 - zaffari_substitu_automatica
 
 #"produtos_escolhidos": @results.produtos_escolhidos,
 # Regex para sanitizar sequências de escape inválidas em JSON armazenado em campos da Weni
 INVALID_ESCAPE_SEQUENCE_RE = re.compile(r'\\(?!(["\\/bfnrt]|u[0-9a-fA-F]{4}))')
 
+QUANTIDADE_MINIMA_ESTOQUE = 10
 
 def make_request_with_retry(method, url, max_retries=2, initial_delay=0.5, **kwargs):
     """
@@ -315,7 +315,7 @@ def convert_quantity_to_units(quantity_kg, unit_multiplier, measurement_unit):
     return round(quantity_kg, 3) if isinstance(quantity_kg, float) else quantity_kg
 
 
-def select_closest_products(products_structured, original_price, max_products, teste=None):
+def select_closest_products(products_structured, original_price, max_products, debug=None):
     """
     Seleciona os produtos com preço mais próximo do produto original.
     """
@@ -324,11 +324,11 @@ def select_closest_products(products_structured, original_price, max_products, t
 
     try:
         original_price = float(original_price)
-        teste += " original_price: " + str(original_price) + " - "
+        debug += " original_price: " + str(original_price) + " - "
     except (TypeError, ValueError):
         raise ValueError(f"Erro ao converter preço original para float: {original_price}")
 
-    teste += " products_structured: " + str(products_structured) + " - "
+    debug += " products_structured: " + str(products_structured) + " - "
     candidates = []
     for product_name, product_data in products_structured.items():
         sku_candidate = str(product_data.get("sku", "") or "")
@@ -350,13 +350,13 @@ def select_closest_products(products_structured, original_price, max_products, t
                 "measurement_unit": product_data.get("measurement_unit", "un"),
             }
         )
-    teste += "candidates: " + str(candidates) + " - "
+    debug += "candidates: " + str(candidates) + " - "
     candidates.sort(key=lambda item: abs(item["price"] - original_price))
-    return candidates[:max_products], teste
+    return candidates[:max_products], debug
 
 
 
-def cart_simulation(base_url, products_details, seller, quantity, country, engine, teste=None):
+def cart_simulation(base_url, products_details, seller, quantity, country, engine, debug=None):
     """
     Performs cart simulation to check availability and delivery channel.
 
@@ -382,11 +382,11 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
             # Priorizar quantidade já convertida para unidades quando disponível
             if "quantity_in_units_for_cart_sim" in product_data:
                 api_quantity = int(round(product_data["quantity_in_units_for_cart_sim"]))
-                teste += f"cart_simulation: usando quantity_in_units_for_cart_sim={api_quantity} - "
+                debug += f"cart_simulation: usando quantity_in_units_for_cart_sim={api_quantity} - "
             elif "quantity_in_units" in product_data:
                 # Fallback legado (não deve mais ser usado fora de cart_simulation)
                 api_quantity = int(round(product_data["quantity_in_units"]))
-                teste += f"cart_simulation: usando quantity_in_units (fallback)={api_quantity} - "
+                debug += f"cart_simulation: usando quantity_in_units (fallback)={api_quantity} - "
             else:
                 # Obter informações de unidade para conversão de quantidade
                 unit_multiplier = float(product_data.get("unit_multiplier", 1.0))
@@ -399,7 +399,7 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
                     # API do carrinho requer quantidade em unidades como inteiro
                     units_float = qty_from_product / unit_multiplier
                     api_quantity = int(round(units_float))
-                    teste += f"cart_simulation: convertendo quantidade {qty_from_product}kg para {api_quantity} unidades (unit_multiplier={unit_multiplier}, calculado={units_float}) - "
+                    debug += f"cart_simulation: convertendo quantidade {qty_from_product}kg para {api_quantity} unidades (unit_multiplier={unit_multiplier}, calculado={units_float}) - "
                 else:
                     # Garantir que quantidade seja inteira para produtos por unidade
                     api_quantity = int(round(qty_from_product)) if isinstance(qty_from_product, float) else int(qty_from_product)
@@ -424,10 +424,10 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
                 api_quantity = None
                 if "quantity_in_units_for_cart_sim" in product:
                     api_quantity = int(round(product["quantity_in_units_for_cart_sim"]))
-                    teste += f"cart_simulation: usando quantity_in_units_for_cart_sim(lista)={api_quantity} - "
+                    debug += f"cart_simulation: usando quantity_in_units_for_cart_sim(lista)={api_quantity} - "
                 elif "quantity_in_units" in product:
                     api_quantity = int(round(product["quantity_in_units"]))
-                    teste += f"cart_simulation: usando quantity_in_units(lista, fallback)={api_quantity} - "
+                    debug += f"cart_simulation: usando quantity_in_units(lista, fallback)={api_quantity} - "
                 else:
                     qty_from_product = product.get("quantity", quantity)
                     api_quantity = int(round(qty_from_product)) if isinstance(qty_from_product, float) else int(qty_from_product)
@@ -443,8 +443,8 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
                 )
 
     if not normalized_products:
-        teste += "cart_simulation: normalized_products vazio - "
-        return [], teste
+        debug += "cart_simulation: normalized_products vazio - "
+        return [], debug
 
     # Usar api_quantity se disponível (já convertida e arredondada para inteiro), senão usar quantity original (também como inteiro)
     items = [
@@ -455,7 +455,7 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
         } 
         for product in normalized_products
     ]
-    teste += f"cart_simulation: items_enviados={items} - "
+    debug += f"cart_simulation: items_enviados={items} - "
     url = f"{base_url}/api/checkout/pub/orderForms/simulation"
     payload = {"items": items, "country": country}
 
@@ -473,7 +473,7 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
             for item in response_data.get("items", [])
             if item.get("availability", "").lower() == "available"
         }
-        teste += f"cart_simulation: simulation_items_keys={list(simulation_items.keys())} - "
+        debug += f"cart_simulation: simulation_items_keys={list(simulation_items.keys())} - "
 
 
         for product_detail in normalized_products:
@@ -481,14 +481,14 @@ def cart_simulation(base_url, products_details, seller, quantity, country, engin
             if sku_id in simulation_items:
                 selected_products.append(product_detail)
 
-        teste += f"cart_simulation: selected_products={selected_products} - "
-        return selected_products, teste
+        debug += f"cart_simulation: selected_products={selected_products} - "
+        return selected_products, debug
     except requests.exceptions.RequestException as e:
-        teste += f"cart_simulation: erro={e} - "
-        return [], teste
+        debug += f"cart_simulation: erro={e} - "
+        return [], debug
 
 
-def search_products_by_merchandise_group(merchandise_group, original_price, base_url, engine, original_sku_id=None, original_quantity=None, teste=None):
+def search_products_by_merchandise_group(merchandise_group, original_price, base_url, engine, original_sku_id=None, original_quantity=None, debug=None):
     """
     Busca produtos similares usando o Merchandise_Group.
     Regras principais de preço:
@@ -508,8 +508,8 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
         dict: Estrutura de produtos encontrados, organizada por nome do produto,
               contendo apenas as chaves "sku", "name" e "price".
     """
-    if teste is None:
-        teste = ""
+    if debug is None:
+        debug = ""
 
     products_less_or_equal = {}
     products_up_to_twenty = {}
@@ -526,7 +526,7 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
     original_total_value = round(original_price * original_quantity, 3)
     
     # Adicionar logs de debug
-    teste += f"search_by_merch_group: original_sku_id={original_sku_id} original_price={original_price} original_quantity={original_quantity} original_total={original_total_value} - "
+    debug += f"search_by_merch_group: original_sku_id={original_sku_id} original_price={original_price} original_quantity={original_quantity} original_total={original_total_value} - "
     
     try:
         # Montar URL da API de busca
@@ -547,17 +547,17 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
         products = response.json() 
         
         if not isinstance(products, list):
-            teste += f"search_by_merch_group: formato_resposta_invalido={type(products)} - "
-            return {}, False, False, teste
+            debug += f"search_by_merch_group: formato_resposta_invalido={type(products)} - "
+            return {}, False, False, debug
         
-        teste += f"search_by_merch_group: total_produtos_encontrados={len(products)} - "
+        debug += f"search_by_merch_group: total_produtos_encontrados={len(products)} - "
         
         produtos_processados = 0
         itens_processados = 0
         produtos_rejeitados_por_20 = 0  # Contador de produtos rejeitados por exceder +20%
         for product in products:
             if not product.get("items"):
-                teste += f"search_by_merch_group: pulando_produto_sem_items={product.get('productId')} - "
+                debug += f"search_by_merch_group: pulando_produto_sem_items={product.get('productId')} - "
                 continue
             
             product_name_vtex = product.get("productName", "")
@@ -566,7 +566,7 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
 
             produtos_processados += 1
             total_items_produto = len(product.get("items", []))
-            teste += f"search_by_merch_group: produto_{produtos_processados} items={total_items_produto} - "
+            debug += f"search_by_merch_group: produto_{produtos_processados} items={total_items_produto} - "
 
             # Considerar TODOS os itens do produto, não apenas o primeiro
             for item in product.get("items", []):
@@ -580,7 +580,7 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                 
                 # Excluir o SKU original se for o mesmo
                 if str(item_id) == str(original_sku_id):
-                    teste += f"search_by_merch_group: SKU_original_excluido={item_id} - "
+                    debug += f"search_by_merch_group: SKU_original_excluido={item_id} - "
                     continue
                 
                 # Obter imagem do item
@@ -599,7 +599,7 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                     offer = seller.get("commertialOffer", {})
                     price_value = offer.get("Price")
                     full_selling_price = offer.get("FullSellingPrice")  # Preço por kg quando disponível
-                    teste += f"search_by_merch_group: price_value_raw={price_value} full_selling_price={full_selling_price} unit_multiplier={unit_multiplier} measurement_unit={measurement_unit} - "
+                    debug += f"search_by_merch_group: price_value_raw={price_value} full_selling_price={full_selling_price} unit_multiplier={unit_multiplier} measurement_unit={measurement_unit} - "
                     if isinstance(price_value, (int, float)):
                         # Preço pode vir em centavos ou reais - normalizar para reais
                         # Na VTEX: se for inteiro >= 100, provavelmente está em centavos
@@ -607,11 +607,11 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                         if isinstance(price_value, int) and price_value >= 100:
                             # Inteiro >= 100: provavelmente está em centavos
                             price_raw = float(price_value) / 100.0
-                            teste += f"search_by_merch_group: price_normalizado_de_centavos={price_value}->{price_raw} - "
+                            debug += f"search_by_merch_group: price_normalizado_de_centavos={price_value}->{price_raw} - "
                         elif price_value > 1000:
                             # Float > 1000: provavelmente está em centavos
                             price_raw = float(price_value) / 100.0
-                            teste += f"search_by_merch_group: price_normalizado_de_centavos={price_value}->{price_raw} - "
+                            debug += f"search_by_merch_group: price_normalizado_de_centavos={price_value}->{price_raw} - "
                         else:
                             # Decimal < 100 ou inteiro < 100: provavelmente já está em reais
                             price_raw = float(price_value)
@@ -629,19 +629,19 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                                     price = float(full_selling_price) / 100.0
                                 else:
                                     price = float(full_selling_price)
-                                teste += f"search_by_merch_group: usando FullSellingPrice={price} (preço por kg) - "
+                                debug += f"search_by_merch_group: usando FullSellingPrice={price} (preço por kg) - "
                             else:
                                 # Calcular preço por kg: preço por unidade / peso por unidade
                                 price = price_raw / unit_multiplier
-                                teste += f"search_by_merch_group: preço_normalizado_por_kg={price} (price_raw={price_raw} / unit_multiplier={unit_multiplier}) - "
+                                debug += f"search_by_merch_group: preço_normalizado_por_kg={price} (price_raw={price_raw} / unit_multiplier={unit_multiplier}) - "
                         else:
                             # Produto vendido por unidade ou unitMultiplier = 1, usar preço direto
                             price = price_raw
-                            teste += f"search_by_merch_group: preço_por_unidade={price} - "
+                            debug += f"search_by_merch_group: preço_por_unidade={price} - "
                         break
 
                 if price is None:
-                    teste += f"search_by_merch_group: SKU {sku_id} sem preço - "
+                    debug += f"search_by_merch_group: SKU {sku_id} sem preço - "
                     continue
 
                 # Usar SKU como chave única para permitir múltiplas variações do mesmo produto
@@ -673,20 +673,20 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                 total_value_with_max_qty = round(price * max_quantity_possible, 3)
                 
                 # Adicionar log detalhado para cada produto avaliado
-                teste += f"search_by_merch_group: avaliando SKU={sku_id} price={price} max_qty_possible={max_quantity_possible} total_com_max_qty={total_value_with_max_qty} vs orig_total={original_total_value} - "
+                debug += f"search_by_merch_group: avaliando SKU={sku_id} price={price} max_qty_possible={max_quantity_possible} total_com_max_qty={total_value_with_max_qty} vs orig_total={original_total_value} - "
 
                 # Se não conseguir comprar pelo menos uma quantidade mínima (0.001 para produtos por peso, 1 para produtos por unidade)
                 # Usar 0.001 como mínimo para aceitar quantidades decimais de produtos vendidos por peso
                 min_quantity_threshold = 0.001 if original_quantity < 1 else 1.0
                 if max_quantity_possible < min_quantity_threshold:
-                    teste += f"search_by_merch_group: SKU={sku_id} REJEITADO (max_qty={max_quantity_possible} < {min_quantity_threshold}) - "
+                    debug += f"search_by_merch_group: SKU={sku_id} REJEITADO (max_qty={max_quantity_possible} < {min_quantity_threshold}) - "
                     continue
 
                 # Calcular aumento percentual do preço unitário (regra principal: até +20%)
                 price_increase_percent = ((price - original_price) / original_price) * 100 if original_price > 0 else 0
                 if price_increase_percent > 20.0:
                     produtos_rejeitados_por_20 += 1
-                    teste += f"search_by_merch_group: SKU={sku_id} REJEITADO (price_increase={price_increase_percent:.1f}% > 20%) - "
+                    debug += f"search_by_merch_group: SKU={sku_id} REJEITADO (price_increase={price_increase_percent:.1f}% > 20%) - "
                     continue
                 
                 # REGRA: O valor total NUNCA deve ultrapassar o original
@@ -694,15 +694,15 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
                     # Produto com valor total menor ou igual ao original - ACEITAR
                     if unique_key not in products_less_or_equal:
                         products_less_or_equal[unique_key] = variation
-                        teste += f"search_by_merch_group: <=orig_ADICIONADO SKU={sku_id} price={price} max_qty={max_quantity_possible} total={total_value_with_max_qty} price_increase={price_increase_percent:.1f}% - "
+                        debug += f"search_by_merch_group: <=orig_ADICIONADO SKU={sku_id} price={price} max_qty={max_quantity_possible} total={total_value_with_max_qty} price_increase={price_increase_percent:.1f}% - "
                     continue
 
                 # Se chegou aqui, preço dentro de +20% mas total acima do original -> guardar no bucket de +20
                 if unique_key not in products_up_to_twenty:
                     products_up_to_twenty[unique_key] = variation
-                    teste += f"search_by_merch_group: <=+20_ADICIONADO SKU={sku_id} price={price} max_qty={max_quantity_possible} total={total_value_with_max_qty} price_increase={price_increase_percent:.1f}% - "
+                    debug += f"search_by_merch_group: <=+20_ADICIONADO SKU={sku_id} price={price} max_qty={max_quantity_possible} total={total_value_with_max_qty} price_increase={price_increase_percent:.1f}% - "
         
-        teste += f"search_by_merch_group: resumo produtos_processados={produtos_processados} itens_processados={itens_processados} produtos_rejeitados_por_20={produtos_rejeitados_por_20} - "
+        debug += f"search_by_merch_group: resumo produtos_processados={produtos_processados} itens_processados={itens_processados} produtos_rejeitados_por_20={produtos_rejeitados_por_20} - "
         
         # Verificar se encontrou produtos mas todos foram rejeitados por exceder +20%
         found_but_rejected_by_20 = produtos_rejeitados_por_20 > 0 and len(products_less_or_equal) == 0 and len(products_up_to_twenty) == 0
@@ -710,35 +710,35 @@ def search_products_by_merchandise_group(merchandise_group, original_price, base
         if products_less_or_equal:
             # products_less_or_equal: produtos em que é possível montar um cenário com
             # valor_total_substituto <= valor_total_original
-            teste += f"search_by_merch_group: <=orig_total={len(products_less_or_equal)} - "
+            debug += f"search_by_merch_group: <=orig_total={len(products_less_or_equal)} - "
             # has_products_less_or_equal = False indica que temos opção "segura" para auto-substituição
-            return products_less_or_equal, False, found_but_rejected_by_20, teste
+            return products_less_or_equal, False, found_but_rejected_by_20, debug
 
         # products_up_to_twenty: produtos com preço unitário dentro de +20%,
         # mas que exigiriam um cenário em que o valor total ultrapassa o original
         # (na prática, hoje a regra de quantidade impede que esses sejam usados,
         # mas mantemos o bucket por compatibilidade).
-        teste += f"search_by_merch_group: <=+20_total={len(products_up_to_twenty)} - "
+        debug += f"search_by_merch_group: <=+20_total={len(products_up_to_twenty)} - "
         # has_products_less_or_equal = True indica que só temos opções "limite +20"
-        return products_up_to_twenty, True, found_but_rejected_by_20, teste
+        return products_up_to_twenty, True, found_but_rejected_by_20, debug
         
     except requests.exceptions.Timeout:
-        teste += f"search_by_merch_group: timeout - "
-        return {}, False, False, teste
+        debug += f"search_by_merch_group: timeout - "
+        return {}, False, False, debug
         
     except requests.exceptions.RequestException as e:
-        teste += f"search_by_merch_group: request_error={str(e)[:100]} - "
+        debug += f"search_by_merch_group: request_error={str(e)[:100]} - "
         if hasattr(e, "response") and e.response is not None:
-            teste += f"search_by_merch_group: status={e.response.status_code} - "
-        return {}, False, False, teste
+            debug += f"search_by_merch_group: status={e.response.status_code} - "
+        return {}, False, False, debug
         
     except (KeyError, IndexError, TypeError) as e:
-        teste += f"search_by_merch_group: parse_error={e} - "
-        return {}, False, False, teste
+        debug += f"search_by_merch_group: parse_error={e} - "
+        return {}, False, False, debug
 
     except Exception as e:
-        teste += f"search_by_merch_group: unexpected_error={e} - "
-        return {}, False, False, teste
+        debug += f"search_by_merch_group: unexpected_error={e} - "
+        return {}, False, False, debug
 
 
 def get_vtex_order_details(order_id, engine):
@@ -889,7 +889,7 @@ def get_weni_contact(urn, engine):
         return None
 
 
-def update_weni_contact(urn, name, skus_list, engine, order_id=None, teste=""):
+def update_weni_contact(urn, name, skus_list, engine, order_id=None, debug=""):
     """
     Atualiza contato na API da Weni com nova lista de SKUs e order_id atual
     
@@ -899,9 +899,9 @@ def update_weni_contact(urn, name, skus_list, engine, order_id=None, teste=""):
         skus_list (list): Lista de SKUs processadas
         engine: Engine object para logging
         order_id (str, optional): ID do pedido atual para armazenar
-        teste (str, optional): String de debug para acumular logs
+        debug (str, optional): String de debug para acumular logs
     Returns:
-        tuple: (success: bool, teste: str)
+        tuple: (success: bool, debug: str)
     """
     debug_info = f"update_weni_contact: INICIO urn={urn} name={name} skus_list={skus_list} order_id={order_id} - "
     try:
@@ -926,23 +926,23 @@ def update_weni_contact(urn, name, skus_list, engine, order_id=None, teste=""):
             debug_info += f"update_weni_contact: raise_for_status_OK - "
         except requests.exceptions.HTTPError as http_err:
             debug_info += f"update_weni_contact: HTTP_ERROR={str(http_err)} response_text={response.text[:500]} - "
-            return False, teste + debug_info
+            return False, debug + debug_info
         except Exception as raise_err:
             debug_info += f"update_weni_contact: ERRO_RAISE_FOR_STATUS={str(raise_err)} response_text={response.text[:500] if hasattr(response, 'text') else 'N/A'} - "
-            return False, teste + debug_info
+            return False, debug + debug_info
         
         if response.status_code == 200:
             debug_info += f"update_weni_contact: SUCESSO status_code=200 response_text={response.text[:200]} - "
-            return True, teste + debug_info
+            return True, debug + debug_info
         else:
             debug_info += f"update_weni_contact: FALHA status_code={response.status_code} response_text={response.text[:500]} - "
-            return False, teste + debug_info
+            return False, debug + debug_info
     except requests.exceptions.RequestException as e:
         debug_info += f"update_weni_contact: REQUEST_EXCEPTION={str(e)} tipo={type(e).__name__} - "
-        return False, teste + debug_info
+        return False, debug + debug_info
     except Exception as e:
         debug_info += f"update_weni_contact: EXCEPTION_GERAL={str(e)} tipo={type(e).__name__} - "
-        return False, teste + debug_info
+        return False, debug + debug_info
 
 
 def save_produtos_escolhidos_to_weni(urn, produtos_escolhidos, engine):
@@ -1003,17 +1003,17 @@ def save_produtos_escolhidos_to_weni(urn, produtos_escolhidos, engine):
         response.raise_for_status()
 
         success = 200 <= response.status_code < 300
-        teste_local = (
+        debug_local = (
             f"save_produtos_escolhidos_to_weni: status={response.status_code} "
             f"success={success} itens={len(items_normalizados)} - "
         )
-        return success, teste_local
+        return success, debug_local
     except requests.exceptions.RequestException as e:
-        teste_local = f"save_produtos_escolhidos_to_weni: request_error={e} - "
-        return False, teste_local
+        debug_local = f"save_produtos_escolhidos_to_weni: request_error={e} - "
+        return False, debug_local
     except Exception as e:
-        teste_local = f"save_produtos_escolhidos_to_weni: unexpected_error={e} - "
-        return False, teste_local
+        debug_local = f"save_produtos_escolhidos_to_weni: unexpected_error={e} - "
+        return False, debug_local
 
 
 def get_processed_skus_from_weni(contact_data, engine=None):
@@ -1076,7 +1076,7 @@ def get_weni_contact_robust(phone, engine):
     return None, urn_with_9
 
 
-def start_weni_flow(phone, produtos_escolhidos, produto_antigo, order_id, commerce_id, name, engine, first_contact, is_promotional=False, is_journey=False, teste=None):
+def start_weni_flow(phone, produtos_escolhidos, produto_antigo, order_id, commerce_id, name, engine, first_contact, is_promotional=False, is_journey=False, debug=None):
     """
     Dispara fluxo na Weni com os produtos escolhidos para substituição.
     
@@ -1091,24 +1091,24 @@ def start_weni_flow(phone, produtos_escolhidos, produto_antigo, order_id, commer
         first_contact: Se é o primeiro contato
         is_promotional (bool): Se é item promocional
         is_journey (bool): Se é um fluxo de journey
-        teste (str): String para acumular logs de debug
+        debug (str): String para acumular logs de debug
     
     Returns:
-        tuple: (bool, str) - (success, teste_atualizado)
+        tuple: (bool, str) - (success, debug_atualizado)
     """
-    if teste is None:
-        teste = ""
+    if debug is None:
+        debug = ""
     
-    teste += f"start_weni_flow: inicio phone={bool(phone)} produtos_escolhidos_count={len(produtos_escolhidos) if produtos_escolhidos else 0} order_id={order_id} is_promotional={is_promotional} is_journey={is_journey} - "
+    debug += f"start_weni_flow: inicio phone={bool(phone)} produtos_escolhidos_count={len(produtos_escolhidos) if produtos_escolhidos else 0} order_id={order_id} is_promotional={is_promotional} is_journey={is_journey} - "
     
     try:
         if not phone:
-            teste += f"start_weni_flow: ERRO phone_vazio - "
-            return False, teste
+            debug += f"start_weni_flow: ERRO phone_vazio - "
+            return False, debug
         
         # Formatar telefone para URN (remover o "whatsapp:" do início se existir)
         urn = phone.replace("+", "whatsapp:") if not phone.startswith("whatsapp:") else phone
-        teste += f"start_weni_flow: urn_formatado={urn} - "
+        debug += f"start_weni_flow: urn_formatado={urn} - "
         
         url = "https://flows.weni.ai/api/v2/flow_starts.json"
         headers = {
@@ -1133,29 +1133,29 @@ def start_weni_flow(phone, produtos_escolhidos, produto_antigo, order_id, commer
             }
         }
         
-        teste += f"start_weni_flow: preparando_requisicao url={url} - "
+        debug += f"start_weni_flow: preparando_requisicao url={url} - "
         
         # Timeout reduzido para evitar timeout do contexto de requisição
         response = requests.post(url, headers=headers, json=body, timeout=15)
         status_code = response.status_code
-        teste += f"start_weni_flow: status_code={status_code} - "
+        debug += f"start_weni_flow: status_code={status_code} - "
         
         response.raise_for_status()
         
-        teste += f"start_weni_flow: SUCESSO - "
-        return True, teste
+        debug += f"start_weni_flow: SUCESSO - "
+        return True, debug
         
     except requests.exceptions.RequestException as e:
-        teste += f"start_weni_flow: request_error={str(e)} - "
+        debug += f"start_weni_flow: request_error={str(e)} - "
         if hasattr(e, "response") and e.response is not None:
             try:
-                teste += f"start_weni_flow: response_status={e.response.status_code} response_text={e.response.text[:200]} - "
+                debug += f"start_weni_flow: response_status={e.response.status_code} response_text={e.response.text[:200]} - "
             except Exception:
                 pass
-        return False, teste
+        return False, debug
     except Exception as e:
-        teste += f"start_weni_flow: unexpected_error={type(e).__name__}:{str(e)} - "
-        return False, teste
+        debug += f"start_weni_flow: unexpected_error={type(e).__name__}:{str(e)} - "
+        return False, debug
 
 
 def convert_image_to_base64(url: str):
@@ -1333,7 +1333,8 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
     """
     Envia sugestão de substituição escolhida para a API da Zaffari (ambiente QA).
 
-    POST https://hml-api.zaffari.com.br/ecommerce/integration-matrix/api/v1/flow/orderProductReplacementSugestion
+    POST https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/flow/orderProductReplacementSugestion
+    
     Body: {
       "orderId": "string",
       "productIdOriginal": "string",
@@ -1342,7 +1343,7 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
     }
     """
     try:
-        base_url = "https://hml-api.zaffari.com.br/ecommerce/integration-matrix"
+        base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
         url = f"{base_url}/api/v1/flow/orderProductReplacementSugestion"
         payload = {
             "orderId": str(order_id),
@@ -1365,11 +1366,11 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
         return False
 
 
-def send_instaleap_external_data(order_id, product_id, ruptura_message, teste=None):
+def send_instaleap_external_data(order_id, product_id, ruptura_message, debug=None):
     """
     Informa ruptura do pedido na API da Zaffari (ambiente QA).
 
-    POST https://hml-api.zaffari.com.br/ecommerce/integration-matrix/api/v1/flow/instaleapExternalData
+    POST https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/flow/instaleapExternalData
     Body:
     {
       "orderId": "string",
@@ -1383,26 +1384,26 @@ def send_instaleap_external_data(order_id, product_id, ruptura_message, teste=No
         order_id (str): ID do pedido
         product_id (str): ID do produto
         ruptura_message (str): Mensagem de ruptura
-        teste (str, optional): String para acumular logs de debug
+        debug (str, optional): String para acumular logs de debug
     
     Returns:
-        tuple: (bool, str) - (success, teste_atualizado)
+        tuple: (bool, str) - (success, debug_atualizado)
     """
-    if teste is None:
-        teste = ""
+    if debug is None:
+        debug = ""
     
     # Validar que product_id não está vazio
     if not product_id or str(product_id).strip() == "":
-        teste += f"instaleap: ERRO product_id está vazio (order_id={order_id}) - "
-        return False, teste
+        debug += f"instaleap: ERRO product_id está vazio (order_id={order_id}) - "
+        return False, debug
     
     # Garantir que product_id seja string
     product_id = str(product_id).strip()
     order_id = str(order_id).strip() if order_id else ""
-    teste += f"instaleap: order_id={order_id} - product_id={product_id} - ruptura_message={ruptura_message} - "
+    debug += f"instaleap: order_id={order_id} - product_id={product_id} - ruptura_message={ruptura_message} - "
     
     try:
-        base_url = "https://hml-api.zaffari.com.br/ecommerce/integration-matrix"
+        base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
         url = f"{base_url}/api/v1/flow/instaleapExternalData"
         payload = {
             "orderId": order_id,
@@ -1415,52 +1416,143 @@ def send_instaleap_external_data(order_id, product_id, ruptura_message, teste=No
         }
         
         # Logs de debug antes de enviar
-        teste += f"instaleap: preparando_requisicao url={url} - "
-        teste += f"instaleap: payload={json.dumps(payload)[:200]} - "
+        debug += f"instaleap: preparando_requisicao url={url} - "
+        debug += f"instaleap: payload={json.dumps(payload)[:200]} - "
         
         # Timeout reduzido para evitar timeout do contexto de requisição
         resp = requests.post(url, json=payload, headers=headers, timeout=15)
         
         status_code = resp.status_code
-        teste += f"instaleap: status_code={status_code} - "
+        debug += f"instaleap: status_code={status_code} - "
         
         # Tentar ler a resposta
         try:
             response_text = resp.text[:500] if resp.text else ""
-            teste += f"instaleap: response_text={response_text} - "
+            debug += f"instaleap: response_text={response_text} - "
             # Tentar parsear como JSON se possível
             try:
                 response_json = resp.json()
-                teste += f"instaleap: response_json={json.dumps(response_json)[:300]} - "
+                debug += f"instaleap: response_json={json.dumps(response_json)[:300]} - "
             except Exception:
                 pass
         except Exception as e:
-            teste += f"instaleap: erro_ao_ler_response={str(e)} - "
+            debug += f"instaleap: erro_ao_ler_response={str(e)} - "
         
         success = 200 <= status_code < 300
-        teste += f"instaleap: success={success} - "
+        debug += f"instaleap: success={success} - "
         
         if not success:
-            teste += f"instaleap: FALHOU status={status_code} - "
+            debug += f"instaleap: FALHOU status={status_code} - "
         
-        return success, teste
+        return success, debug
         
     except requests.exceptions.Timeout as e:
-        teste += f"instaleap: timeout_error={str(e)} - "
-        return False, teste
+        debug += f"instaleap: timeout_error={str(e)} - "
+        return False, debug
     except requests.exceptions.RequestException as e:
-        teste += f"instaleap: request_error={str(e)} - "
+        debug += f"instaleap: request_error={str(e)} - "
         if hasattr(e, "response") and e.response is not None:
             try:
-                teste += f"instaleap: response_status={e.response.status_code} response_text={e.response.text[:200]} - "
+                debug += f"instaleap: response_status={e.response.status_code} response_text={e.response.text[:200]} - "
             except Exception:
                 pass
-        return False, teste
+        return False, debug
     except Exception as e:
-        teste += f"instaleap: unexpected_error={type(e).__name__}:{str(e)} - "
-        return False, teste
+        debug += f"instaleap: unexpected_error={type(e).__name__}:{str(e)} - "
+        return False, debug
 
-def process_product_replacement(input_data, vtex_order, replacement_method, engine, client_reference=None, promotional_items=[], teste=None):
+
+def get_seller_id_from_vtex_order(vtex_order, debug=None):
+    """
+    Extrai o sellerId (ID da loja) do pedido VTEX.
+    Aceita formatos como:
+      - "1350"
+      - "1350.01"
+      - "hmlzaffari1350"
+      - "HMLZAFFARI1350"
+    """
+    if debug is None:
+        debug = ""
+
+    def extract_seller_number(value):
+        if value is None:
+            return None
+
+        # Capturar dígitos finais (ex.: "hmlzaffari1350")
+        s = str(value)
+        digits = ""
+        for ch in reversed(s):
+            if ch.isdigit():
+                digits = ch + digits
+            elif digits:
+                break
+        return int(digits) if digits else None
+
+    # 1) Tentar pelo array "sellers" do pedido (ex.: "id": "hmlzaffari1350")
+    sellers = vtex_order.get("sellers", []) if isinstance(vtex_order, dict) else []
+    if sellers:
+        seller_raw = sellers[0].get("id")  # "hmlzaffari1350"
+        seller_id = extract_seller_number(seller_raw)  # 1350
+        if seller_id is not None:
+            debug += f"get_seller_id_from_vtex_order: seller_encontrado_em_sellers={seller_id} raw={seller_raw} - "
+            return seller_id, debug
+
+    debug += "get_seller_id_from_vtex_order: seller_nao_encontrado - "
+    return None, debug
+    
+
+def get_regional_price_and_stock(sku_id, seller_id, debug=None):
+    """
+    Consulta o preço regionalizado e o estoque do SKU em um seller específico.
+
+    Endpoint:
+      GET https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/product/{sku}?sellerId={sellerId}
+               
+    Retorna:
+      (base_price, stock_quantity, debug_atualizado)
+    """
+    if debug is None:
+        debug = ""
+
+    if not sku_id or not seller_id:
+        debug += "get_regional_price_and_stock: parametros_invalidos sku_ou_seller_vazio - "
+        return None, None, debug
+
+    try:
+        base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
+        url = f"{base_url}/api/v1/product/{sku_id}?sellerId={seller_id}"
+        headers = {
+            "Content-Type": "application/json",
+            # Mesmo header de autenticação utilizado nos outros endpoints da Zaffari
+            "Ocp-Apim-Subscription-Key": "df1cbce4af78460895d0299a209d0d5c",
+        }
+
+        debug += f"get_regional_price_and_stock: iniciando_request sku_id={sku_id} seller_id={seller_id} - "
+
+        response = requests.get(url, headers=headers, timeout=10)
+        status = response.status_code
+        debug += f"get_regional_price_and_stock: status_code={status} - "
+
+        response.raise_for_status()
+
+        data = response.json() if response.content else {}
+        price_info = data.get("price") or {}
+        stock_info = data.get("stock") or {}
+
+        base_price = price_info.get("basePrice")
+        stock_quantity = stock_info.get("quantity")
+
+        debug += f"get_regional_price_and_stock: base_price={base_price} stock_quantity={stock_quantity} - "
+
+        return base_price, stock_quantity, debug
+    except requests.exceptions.RequestException as e:
+        debug += f"get_regional_price_and_stock: request_error={str(e)} - "
+        return None, None, debug
+    except Exception as e:
+        debug += f"get_regional_price_and_stock: unexpected_error={type(e).__name__}:{str(e)} - "
+        return None, None, debug
+
+def process_product_replacement(input_data, vtex_order, replacement_method, engine, client_reference=None, promotional_items=[], debug=None):
     """
     Função unificada para processar replacementBySimilar e contactConfirm
     """
@@ -1490,13 +1582,13 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         if order_id and order_id != current_order_id:
             processed_skus = []  # Limpar lista de SKUs para novo pedido
             # Atualizar order_id no contato
-            _, teste = update_weni_contact(urn, full_name, [], engine, order_id=current_order_id, teste=teste if teste else "")
+            _, debug = update_weni_contact(urn, full_name, [], engine, order_id=current_order_id, debug=debug if debug else "")
         else:
             # Mesmo pedido ou primeiro pedido, usar SKUs processadas existentes
             processed_skus = get_processed_skus_from_weni(contact_data, engine)
             if not order_id and current_order_id:
                 # Primeira vez, atualizar order_id
-                _, teste = update_weni_contact(urn, full_name, processed_skus, engine, order_id=current_order_id, teste=teste if teste else "")
+                _, debug = update_weni_contact(urn, full_name, processed_skus, engine, order_id=current_order_id, debug=debug if debug else "")
 
 
 
@@ -1519,7 +1611,7 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
     # Processar primeiro SKU
     item_to_process = skus_to_process[0]
     sku_id = item_to_process["id"]
-    teste += f"sku_original_em_avaliacao={sku_id} - "
+    debug += f"sku_original_em_avaliacao={sku_id} - "
 
     # Extrair dados básicos do item (necessário tanto para promocional quanto para normal)
     product_name = item_to_process["name"]
@@ -1533,25 +1625,25 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
     if sku_data:
         original_unit_multiplier = sku_data.get("unit_multiplier", 1.0)
         original_measurement_unit = sku_data.get("measurement_unit", original_unit)
-        teste += f"process_product_replacement: sku_data_api unit_multiplier={original_unit_multiplier} measurement_unit={original_measurement_unit} - "
+        debug += f"process_product_replacement: sku_data_api unit_multiplier={original_unit_multiplier} measurement_unit={original_measurement_unit} - "
     else:
         # Fallback: tentar obter dos atributos do item
         original_unit_multiplier = float(item_to_process.get("attributes", {}).get("unit_multiplier", 1.0))
         original_measurement_unit = original_unit
-        teste += f"process_product_replacement: usando_fallback unit_multiplier={original_unit_multiplier} - "
+        debug += f"process_product_replacement: usando_fallback unit_multiplier={original_unit_multiplier} - "
     
     # Normalizar preço original (pode vir em centavos ou reais)
     if isinstance(original_price_raw, (int, float)):
         # Se o preço for maior que 1000, provavelmente está em centavos
         if original_price_raw > 1000:
             original_price = float(original_price_raw) / 100.0
-            teste += f"process_product_replacement: original_price_normalizado_de_centavos={original_price_raw}->{original_price} - "
+            debug += f"process_product_replacement: original_price_normalizado_de_centavos={original_price_raw}->{original_price} - "
         else:
             original_price = float(original_price_raw)
-            teste += f"process_product_replacement: original_price={original_price} - "
+            debug += f"process_product_replacement: original_price={original_price} - "
     else:
         original_price = float(original_price_raw or 0)
-        teste += f"process_product_replacement: original_price_convertido={original_price} - "
+        debug += f"process_product_replacement: original_price_convertido={original_price} - "
 
     # Verificar se é item promocional
     if sku_id in promotional_items:
@@ -1572,14 +1664,14 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         # - Se for processado imediatamente: será marcado no bloco de processamento imediato
         # Isso evita que o SKU seja marcado como processado antes de ir para a fila,
         # o que causaria erro quando tentar processar da fila
-        teste += f"process_product_replacement: sku_promocional_detectado_nao_marcando_como_processado_ainda={sku_id} - "
+        debug += f"process_product_replacement: sku_promocional_detectado_nao_marcando_como_processado_ainda={sku_id} - "
         
         return {
             "type": replacement_method,
             "error": "SUBST NAO ADIC - PROMOCIONAL",
             "remove": True,
             "produto_antigo": produto_antigo_promocional,
-            "teste": teste,
+            "debug": debug,
         }
     
     produto_antigo = {
@@ -1596,19 +1688,19 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
     base_url = "https://hmlzaffari.myvtex.com"
     if sku_data:
         merchandise_group = sku_data.get("merchandise_group")
-        teste += f"process_product_replacement: merchandise_group_obtido_da_api={merchandise_group} - "
+        debug += f"process_product_replacement: merchandise_group_obtido_da_api={merchandise_group} - "
     else:
         # Se não tiver os dados, buscar apenas o Merchandise_Group
         merchandise_group = get_sku_merchandise_group(sku_id, engine)
-        teste += f"process_product_replacement: merchandise_group_buscado_separadamente={merchandise_group} - "
+        debug += f"process_product_replacement: merchandise_group_buscado_separadamente={merchandise_group} - "
     
     if not merchandise_group:
         # Se não encontrar Merchandise_Group, registrar SKU como processada e retornar erro
         if sku_id not in processed_skus:
             updated_skus = processed_skus + [sku_id]
-            teste += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_MERCH_GROUP sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-            teste += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_MERCH_GROUP save_success={save_success} sku_id={sku_id} - "
+            debug += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_MERCH_GROUP sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+            debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_MERCH_GROUP save_success={save_success} sku_id={sku_id} - "
             
             # Verificar se o SKU foi realmente salvo fazendo uma leitura
             if save_success and urn:
@@ -1617,39 +1709,39 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     if contact_data_verify:
                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                         sku_salvo = str(sku_id) in processed_skus_verify
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                     else:
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP contact_data_verify=None - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP contact_data_verify=None - "
                 except Exception as e:
-                    teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP={str(e)} - "
+                    debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_MERCH_GROUP={str(e)} - "
             else:
-                teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_MERCH_GROUP save_success={save_success} urn={urn} - "
+                debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_MERCH_GROUP save_success={save_success} urn={urn} - "
         else:
-            teste += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_MERCH_GROUP sku_id={sku_id} processed_skus={processed_skus} - "
+            debug += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_MERCH_GROUP sku_id={sku_id} processed_skus={processed_skus} - "
         return {
             "type": replacement_method,
             "error": f"Merchandise_Group não encontrado para SKU {sku_id}",
             "remove": True,
             "produto_antigo": produto_antigo,
-            "teste": teste,
+            "debug": debug,
         }
     
     # Buscar produtos similares usando Merchandise_Group (API 2)
-    products_structured, has_products_less_or_equal, found_but_rejected_by_20, teste = search_products_by_merchandise_group(
-        merchandise_group, original_price, base_url, engine, original_sku_id=sku_id, original_quantity=quantity, teste=teste
+    products_structured, has_products_less_or_equal, found_but_rejected_by_20, debug = search_products_by_merchandise_group(
+        merchandise_group, original_price, base_url, engine, original_sku_id=sku_id, original_quantity=quantity, debug=debug
     )
 
-    teste += "products_structured: " + str(products_structured) + " - "
-    teste += f"process_product_replacement: has_products_less_or_equal={has_products_less_or_equal} found_but_rejected_by_20={found_but_rejected_by_20} - "
+    debug += "products_structured: " + str(products_structured) + " - "
+    debug += f"process_product_replacement: has_products_less_or_equal={has_products_less_or_equal} found_but_rejected_by_20={found_but_rejected_by_20} - "
     #products_structured = None
     
     if not products_structured:
         # Registrar SKU como processada mesmo sem encontrar produtos
         if sku_id not in processed_skus:
             updated_skus = processed_skus + [sku_id]
-            teste += f"process_product_replacement: ANTES_SALVAR_SKU sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-            teste += f"process_product_replacement: DEPOIS_SALVAR_SKU save_success={save_success} sku_id={sku_id} - "
+            debug += f"process_product_replacement: ANTES_SALVAR_SKU sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+            debug += f"process_product_replacement: DEPOIS_SALVAR_SKU save_success={save_success} sku_id={sku_id} - "
             
             # Verificar se o SKU foi realmente salvo fazendo uma leitura
             if save_success and urn:
@@ -1658,28 +1750,34 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     if contact_data_verify:
                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                         sku_salvo = str(sku_id) in processed_skus_verify
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                     else:
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO contact_data_verify=None - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO contact_data_verify=None - "
                 except Exception as e:
-                    teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO={str(e)} - "
+                    debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO={str(e)} - "
             else:
-                teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO save_success={save_success} urn={urn} - "
+                debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO save_success={save_success} urn={urn} - "
         else:
-            teste += f"process_product_replacement: SKU_JA_PROCESSADO sku_id={sku_id} processed_skus={processed_skus} - "
+            debug += f"process_product_replacement: SKU_JA_PROCESSADO sku_id={sku_id} processed_skus={processed_skus} - "
         
         # Determinar mensagem de erro baseado em se encontrou produtos mas todos foram rejeitados
         error_message = "SUBST NAO ADIC. - VALOR ACIMA" if found_but_rejected_by_20 else "SUBST NAO ADIC. - SEM OPCOES"
-        teste += f"process_product_replacement: error_message={error_message} - "
+        debug += f"process_product_replacement: error_message={error_message} - "
         
         return {
             "type": replacement_method,
             "error": error_message,
             "remove": True,
             "produto_antigo": produto_antigo,
-            "teste": teste,
+            "debug": debug,
         }
 
+    # Determinar sellerId (ID da loja) a partir do pedido VTEX para regionalizar preço/estoque
+    seller_id, debug = get_seller_id_from_vtex_order(vtex_order, debug=debug)
+    debug += f"process_product_replacement: seller_id_para_regionalizacao={seller_id} - "
+
+    # Para reduzir volume de requisições, aplicar regionalização APENAS nos produtos já escolhidos
+    # (chosen_products), que são no máximo 3 (contactConfirm) ou 1 (replacementBySimilar).
     
     # Para replacementBySimilar: se só temos produtos com valor total <= original,
     # o padrão é não falar com o cliente (auto-substituição). Esse valor ainda pode
@@ -1688,23 +1786,23 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         talk_to_client = False
 
     # Simular carrinho
-    products_with_stock, teste = cart_simulation(
+    products_with_stock, debug = cart_simulation(
         base_url=base_url,
         products_details=products_structured,
         seller="1",
         quantity=quantity,
         country="BRA",
         engine=engine,
-        teste=teste
+        debug=debug
     )
 
     if not products_with_stock:
         # Registrar SKU como processada
         if sku_id not in processed_skus:
             updated_skus = processed_skus + [sku_id]
-            teste += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_ESTOQUE sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-            teste += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_ESTOQUE save_success={save_success} sku_id={sku_id} - "
+            debug += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_ESTOQUE sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+            debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_ESTOQUE save_success={save_success} sku_id={sku_id} - "
             
             # Verificar se o SKU foi realmente salvo fazendo uma leitura
             if save_success and urn:
@@ -1713,24 +1811,23 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     if contact_data_verify:
                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                         sku_salvo = str(sku_id) in processed_skus_verify
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_ESTOQUE sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_ESTOQUE sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                     else:
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_ESTOQUE contact_data_verify=None - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_ESTOQUE contact_data_verify=None - "
                 except Exception as e:
-                    teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_ESTOQUE={str(e)} - "
+                    debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_ESTOQUE={str(e)} - "
             else:
-                teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_ESTOQUE save_success={save_success} urn={urn} - "
+                debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_ESTOQUE save_success={save_success} urn={urn} - "
         else:
-            teste += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_ESTOQUE sku_id={sku_id} processed_skus={processed_skus} - "
+            debug += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_ESTOQUE sku_id={sku_id} processed_skus={processed_skus} - "
         return {
             "type": replacement_method,
             "error": "SUBST NAO ADIC. - SEM OPCOES",
             "remove": True,
             "produto_antigo": produto_antigo,
-            "teste": teste,
+            "debug": debug,
         }
 
-    
     # Filtrar produtos estruturados com estoque
     # Converter todos os sku_ids para string para comparação consistente
     sku_ids_with_stock = {str(product.get("sku", "")) for product in products_with_stock if product.get("sku")}
@@ -1743,21 +1840,75 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         if sku_candidate in sku_ids_with_stock:
             products_structured_with_stock[product_name_vtex] = product_data
 
-    
     # Escolher produtos com preço mais próximo - até 3 para contactConfirm, 1 para replacementBySimilar
     max_products = 3 if replacement_method == "contactConfirm" else 1
-    chosen_products, teste = select_closest_products(
-        products_structured_with_stock, original_price, max_products, teste=teste
+    chosen_products, debug = select_closest_products(
+        products_structured_with_stock, original_price, max_products, debug=debug
     )
+
+    # Regionalizar preço e estoque dos candidatos finais usando a API da loja, se seller_id estiver disponível
+    if seller_id:
+        chosen_regionalizados = []
+        for produto in chosen_products:
+            sku_sub = produto.get("sku_id")
+            regional_price, stock_quantity, debug = get_regional_price_and_stock(sku_sub, seller_id, debug=debug)
+
+            # Se retornou preço regionalizado válido, substituir o preço do candidato
+            if isinstance(regional_price, (int, float)):
+                produto = dict(produto)
+                produto["price"] = float(regional_price)
+                debug += f"process_product_replacement: preco_regionalizado_aplicado SKU={sku_sub}, price={regional_price} - "
+
+            # Se houver informação de estoque regional e for zero/negativo, ignorar o candidato
+            if isinstance(stock_quantity, (int, float)) and stock_quantity <= QUANTIDADE_MINIMA_ESTOQUE:
+                debug += f"process_product_replacement: SKU={sku_sub} ignorado_por_estoque_regional_insuficiente quantity={stock_quantity} - "
+                continue
+
+            chosen_regionalizados.append(produto)
+
+        chosen_products = chosen_regionalizados
+        debug += f"process_product_replacement: chosen_products_após_regionalizacao={len(chosen_products)} - "
+
+        # Se todos os candidatos forem descartados por estoque regional, tratar como SEM OPÇÕES
+        if not chosen_products:
+            if sku_id not in processed_skus:
+                updated_skus = processed_skus + [sku_id]
+                debug += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_OPCOES_REGIONAL sku_id={sku_id} sku já processadas={processed_skus} updated_skus={updated_skus} urn={urn} - "
+                save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+                debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_OPCOES_REGIONAL save_success={save_success} sku_id={sku_id} - "
+
+                if save_success and urn:
+                    try:
+                        contact_data_verify, _ = get_weni_contact_robust(phone, engine) if phone else (None, None)
+                        if contact_data_verify:
+                            processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
+                            sku_salvo = str(sku_id) in processed_skus_verify
+                            debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_OPCOES_REGIONAL sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        else:
+                            debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_OPCOES_REGIONAL contact_data_verify=None - "
+                    except Exception as e:
+                        debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_OPCOES_REGIONAL={str(e)} - "
+                else:
+                    debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_OPCOES_REGIONAL save_success={save_success} urn={urn} - "
+            else:
+                debug += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_OPCOES_REGIONAL sku_id={sku_id} processed_skus={processed_skus} - "
+
+            return {
+                "type": replacement_method,
+                "error": "SUBST NAO ADIC. - SEM OPCOES",
+                "remove": True,
+                "produto_antigo": produto_antigo,
+                "debug": debug,
+            }
 
     
     if not chosen_products:
         # Registrar SKU como processada
         if sku_id not in processed_skus:
             updated_skus = processed_skus + [sku_id]
-            teste += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_CHOSEN sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-            teste += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_CHOSEN save_success={save_success} sku_id={sku_id} - "
+            debug += f"process_product_replacement: ANTES_SALVAR_SKU_SEM_CHOSEN sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+            debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_SEM_CHOSEN save_success={save_success} sku_id={sku_id} - "
             
             # Verificar se o SKU foi realmente salvo fazendo uma leitura
             if save_success and urn:
@@ -1766,30 +1917,30 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     if contact_data_verify:
                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                         sku_salvo = str(sku_id) in processed_skus_verify
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_CHOSEN sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_CHOSEN sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                     else:
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_CHOSEN contact_data_verify=None - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SEM_CHOSEN contact_data_verify=None - "
                 except Exception as e:
-                    teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_CHOSEN={str(e)} - "
+                    debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SEM_CHOSEN={str(e)} - "
             else:
-                teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_CHOSEN save_success={save_success} urn={urn} - "
+                debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SEM_CHOSEN save_success={save_success} urn={urn} - "
         else:
-            teste += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_CHOSEN sku_id={sku_id} processed_skus={processed_skus} - "
+            debug += f"process_product_replacement: SKU_JA_PROCESSADO_SEM_CHOSEN sku_id={sku_id} processed_skus={processed_skus} - "
         return {
             "type": replacement_method,
             "error": "SUBST NAO ADIC. - VALOR ACIMA",
             "remove": True,
             "produto_antigo": produto_antigo,
-            "teste": teste,
+            "debug": debug,
         }
 
     
     # Atualizar Weni com SKU processada (só adicionar se não existir)
     if sku_id not in processed_skus:
         updated_skus = processed_skus + [sku_id]
-        teste += f"process_product_replacement: ANTES_SALVAR_SKU_SUCESSO sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-        save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-        teste += f"process_product_replacement: DEPOIS_SALVAR_SKU_SUCESSO save_success={save_success} sku_id={sku_id} - "
+        debug += f"process_product_replacement: ANTES_SALVAR_SKU_SUCESSO sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+        save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+        debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_SUCESSO save_success={save_success} sku_id={sku_id} - "
         
         # Verificar se o SKU foi realmente salvo fazendo uma leitura
         if save_success and urn:
@@ -1798,15 +1949,15 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                 if contact_data_verify:
                     processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                     sku_salvo = str(sku_id) in processed_skus_verify
-                    teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SUCESSO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                    debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SUCESSO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                 else:
-                    teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SUCESSO contact_data_verify=None - "
+                    debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_SUCESSO contact_data_verify=None - "
             except Exception as e:
-                teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SUCESSO={str(e)} - "
+                debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_SUCESSO={str(e)} - "
         else:
-            teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SUCESSO save_success={save_success} urn={urn} - "
+            debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_SUCESSO save_success={save_success} urn={urn} - "
     else:
-        teste += f"process_product_replacement: SKU_JA_PROCESSADO_SUCESSO sku_id={sku_id} processed_skus={processed_skus} - "
+        debug += f"process_product_replacement: SKU_JA_PROCESSADO_SUCESSO sku_id={sku_id} processed_skus={processed_skus} - "
     
 
     # Preparar resultado
@@ -1855,19 +2006,19 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                 qty_sub = round(max(0, qty_sub - reduction), 3 if (quantity < 1 or measurement_unit == "kg") else 0)
                 valor_total_final = round(preco_sub * qty_sub, 3)
         
-        teste += f"produtos_escolhidos: SKU={produto['sku_id']} preco={preco_sub} qty={qty_sub} valor_total={valor_total_final} original_total={original_total} - "
+        debug += f"produtos_escolhidos: SKU={produto['sku_id']} preco={preco_sub} qty={qty_sub} valor_total={valor_total_final} original_total={original_total} - "
         
         # Se após os ajustes a quantidade for menor que o mínimo aceitável, pular este produto
         # Para produtos por peso (quantity < 1), aceitar quantidades decimais >= 0.001
         # Para produtos por unidade (quantity >= 1), aceitar apenas >= 1
         min_qty_threshold = 0.001 if quantity < 1 else 1.0
         if qty_sub < min_qty_threshold:
-            teste += f"produtos_escolhidos: SKU={produto['sku_id']} REJEITADO (qty={qty_sub} < {min_qty_threshold}, não cabe no limite original_total={original_total}) - "
+            debug += f"produtos_escolhidos: SKU={produto['sku_id']} REJEITADO (qty={qty_sub} < {min_qty_threshold}, não cabe no limite original_total={original_total}) - "
             continue
         
         # Validação final: garantir que o valor total NUNCA ultrapasse o original
         if valor_total_final > original_total:
-            teste += f"produtos_escolhidos: SKU={produto['sku_id']} REJEITADO (valor_total={valor_total_final} > original_total={original_total}) - "
+            debug += f"produtos_escolhidos: SKU={produto['sku_id']} REJEITADO (valor_total={valor_total_final} > original_total={original_total}) - "
             continue
 
         # Converter quantidade para unidades APENAS para cart_simulation (API requer unidades inteiras).
@@ -1889,7 +2040,7 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
             }
         )
 
-        teste += f"produtos_escolhidos: sku={produto['sku_id']} - name={produto['name']} - price={preco_sub} - quantity={qty_sub} - "
+        debug += f"produtos_escolhidos: sku={produto['sku_id']} - name={produto['name']} - price={preco_sub} - quantity={qty_sub} - "
     
     
     # Se nenhum produto passou na validação de valor total, retornar erro
@@ -1897,9 +2048,9 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         # Registrar SKU como processada
         if sku_id not in processed_skus:
             updated_skus = processed_skus + [sku_id]
-            teste += f"process_product_replacement: ANTES_SALVAR_SKU_VALIDACAO_FINAL sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, teste=teste)
-            teste += f"process_product_replacement: DEPOIS_SALVAR_SKU_VALIDACAO_FINAL save_success={save_success} sku_id={sku_id} - "
+            debug += f"process_product_replacement: ANTES_SALVAR_SKU_VALIDACAO_FINAL sku_id={sku_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=current_order_id, debug=debug)
+            debug += f"process_product_replacement: DEPOIS_SALVAR_SKU_VALIDACAO_FINAL save_success={save_success} sku_id={sku_id} - "
             
             # Verificar se o SKU foi realmente salvo fazendo uma leitura
             if save_success and urn:
@@ -1908,21 +2059,21 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     if contact_data_verify:
                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                         sku_salvo = str(sku_id) in processed_skus_verify
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                     else:
-                        teste += f"process_product_replacement: VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL contact_data_verify=None - "
+                        debug += f"process_product_replacement: VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL contact_data_verify=None - "
                 except Exception as e:
-                    teste += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL={str(e)} - "
+                    debug += f"process_product_replacement: ERRO_VERIFICACAO_SALVAMENTO_VALIDACAO_FINAL={str(e)} - "
             else:
-                teste += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_VALIDACAO_FINAL save_success={save_success} urn={urn} - "
+                debug += f"process_product_replacement: NAO_VERIFICOU_SALVAMENTO_VALIDACAO_FINAL save_success={save_success} urn={urn} - "
         else:
-            teste += f"process_product_replacement: SKU_JA_PROCESSADO_VALIDACAO_FINAL sku_id={sku_id} processed_skus={processed_skus} - "
+            debug += f"process_product_replacement: SKU_JA_PROCESSADO_VALIDACAO_FINAL sku_id={sku_id} processed_skus={processed_skus} - "
         return {
             "type": replacement_method,
             "error": "SUBST NAO ADIC. - VALOR ACIMA",
             "remove": True,
             "produto_antigo": produto_antigo,
-            "teste": teste,
+            "debug": debug,
         }
     
     # Ajustar regra de falar com o cliente com base no aumento de preço unitário:
@@ -1940,25 +2091,25 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
                     percentual_aumento = ((preco_sub_escolhido - preco_original) / preco_original) * 100
                     if percentual_aumento >= 20.0:
                         talk_to_client = True
-                        teste += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} > preco_original={preco_original} aumento={percentual_aumento:.2f}% >= 20% => talk_to_client=True - "
+                        debug += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} > preco_original={preco_original} aumento={percentual_aumento:.2f}% >= 20% => talk_to_client=True - "
                     else:
                         talk_to_client = False
-                        teste += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} vs preco_original={preco_original} aumento={percentual_aumento:.2f}% < 20% => talk_to_client=False - "
+                        debug += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} vs preco_original={preco_original} aumento={percentual_aumento:.2f}% < 20% => talk_to_client=False - "
                 else:
                     # Preço original inválido: tratar como auto-substituição
                     talk_to_client = False
-                    teste += f"process_product_replacement: preco_original_invalido={preco_original} => talk_to_client=False - "
+                    debug += f"process_product_replacement: preco_original_invalido={preco_original} => talk_to_client=False - "
             else:
                 # Para outros métodos (contactConfirm), manter lógica anterior se necessário
                 if preco_sub_escolhido > preco_original:
                     talk_to_client = True
-                    teste += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} > preco_original={preco_original} => talk_to_client=True - "
+                    debug += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} > preco_original={preco_original} => talk_to_client=True - "
                 else:
                     talk_to_client = False
-                    teste += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} <= preco_original={preco_original} => talk_to_client=False - "
+                    debug += f"process_product_replacement: preco_sub_escolhido={preco_sub_escolhido} <= preco_original={preco_original} => talk_to_client=False - "
     except Exception as e:
         # Em caso de erro, manter valor anterior de talk_to_client e apenas logar
-        teste += f"process_product_replacement: erro_ajuste_talk_to_client={e} - "
+        debug += f"process_product_replacement: erro_ajuste_talk_to_client={e} - "
 
     return {
         "type": replacement_method,
@@ -1966,7 +2117,7 @@ def process_product_replacement(input_data, vtex_order, replacement_method, engi
         "produtos_escolhidos": produtos_escolhidos,
         "produto_antigo": produto_antigo,  # Usar o dicionário completo que já tem todos os campos incluindo "unit"
         "remove": False,
-        "teste": teste
+        "debug": debug
     }
     
 
@@ -2191,7 +2342,7 @@ def pop_fila_from_codeaction(numero_pedido, engine):
         }
 
 
-def contact_length_of_items(contact_data, engine, request, length_of_items=None, urn=None, teste=None):
+def contact_length_of_items(contact_data, engine, request, length_of_items=None, urn=None, debug=None):
     """
     Atualiza ou extrai a quantidade de itens no pedido do cliente
 
@@ -2204,15 +2355,15 @@ def contact_length_of_items(contact_data, engine, request, length_of_items=None,
     """
 
     # Preparar string de log local
-    teste_local = teste if isinstance(teste, str) else ""
-    teste_local += f"contact_length_of_items: request={request} length_of_items_param={length_of_items} urn={urn} - "
+    debug_local = debug if isinstance(debug, str) else ""
+    debug_local += f"contact_length_of_items: request={request} length_of_items_param={length_of_items} urn={urn} - "
 
     if request == "update":
         # Atualizar a quantidade de itens no pedido do cliente
         if urn is None or length_of_items is None:
             msg = "Error: urn e length_of_items são obrigatórios para update em contact_length_of_items"
-            teste_local += msg + " - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += msg + " - "
+            return (False, debug_local) if debug is not None else False
         try:
             url = f"https://flows.weni.ai/api/v2/contacts.json?urn={urn}"
             headers = {
@@ -2226,16 +2377,16 @@ def contact_length_of_items(contact_data, engine, request, length_of_items=None,
             response = requests.post(url, json=payload, headers=headers)
             response.raise_for_status()
             success = response.status_code == 200
-            teste_local += f"contact_length_of_items:update status={response.status_code} success={success} - "
-            return (success, teste_local) if teste is not None else success
+            debug_local += f"contact_length_of_items:update status={response.status_code} success={success} - "
+            return (success, debug_local) if debug is not None else success
         except requests.exceptions.RequestException as e:
             engine.log.debug(f"Error updating Weni contact: {e}")
-            teste_local += f"contact_length_of_items:update request_error={e} - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += f"contact_length_of_items:update request_error={e} - "
+            return (False, debug_local) if debug is not None else False
         except Exception as e:
             engine.log.debug(f"Error updating Weni contact: {e}")
-            teste_local += f"contact_length_of_items:update unexpected_error={e} - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += f"contact_length_of_items:update unexpected_error={e} - "
+            return (False, debug_local) if debug is not None else False
         
     # request == "extract" → apenas ler valor salvo no contato
     try:
@@ -2245,23 +2396,23 @@ def contact_length_of_items(contact_data, engine, request, length_of_items=None,
             raw_items_length = contact_data["fields"].get("items_length")
             if raw_items_length is None or raw_items_length == "":
                 items_length = 0
-                teste_local += "contact_length_of_items:extract items_length not set, defaulting to 0 - "
+                debug_local += "contact_length_of_items:extract items_length not set, defaulting to 0 - "
             else:
                 try:
                     items_length = int(raw_items_length)
-                    teste_local += f"contact_length_of_items:extract items_length_raw={raw_items_length} parsed={items_length} - "
+                    debug_local += f"contact_length_of_items:extract items_length_raw={raw_items_length} parsed={items_length} - "
                 except (ValueError, TypeError) as e:
                     # Se vier algo inesperado, loga e assume 0
-                    teste_local += f"contact_length_of_items:extract parse_error for '{raw_items_length}' => {e}, using 0 - "
+                    debug_local += f"contact_length_of_items:extract parse_error for '{raw_items_length}' => {e}, using 0 - "
                     items_length = 0
-            return (items_length, teste_local) if teste is not None else items_length
+            return (items_length, debug_local) if debug is not None else items_length
     except (json.JSONDecodeError, KeyError, TypeError) as e:
         if engine:
-            teste_local += f"contact_length_of_items:extract error={e} - "
-    return (0, teste_local) if teste is not None else 0
+            debug_local += f"contact_length_of_items:extract error={e} - "
+    return (0, debug_local) if debug is not None else 0
 
 
-def contact_removed_count(contact_data, engine, request, removed_count=None, urn=None, teste=None):
+def contact_removed_count(contact_data, engine, request, removed_count=None, urn=None, debug=None):
     """
     Atualiza ou extrai a quantidade de produtos REMOVED do pedido do cliente
 
@@ -2271,21 +2422,21 @@ def contact_removed_count(contact_data, engine, request, removed_count=None, urn
         request (str): "update" para atualizar, "extract" para extrair
         removed_count (int): Quantidade de produtos REMOVED
         urn (str): URN do contato do cliente
-        teste (str, optional): String para acumular logs de debug
+        debug (str, optional): String para acumular logs de debug
     
     Returns:
-        tuple ou int: (removed_count, teste_atualizado) se teste não for None, senão apenas removed_count
+        tuple ou int: (removed_count, debug_atualizado) se debug não for None, senão apenas removed_count
     """
     # Preparar string de log local
-    teste_local = teste if isinstance(teste, str) else ""
-    teste_local += f"contact_removed_count: request={request} removed_count_param={removed_count} urn={urn} - "
+    debug_local = debug if isinstance(debug, str) else ""
+    debug_local += f"contact_removed_count: request={request} removed_count_param={removed_count} urn={urn} - "
 
     if request == "update":
         # Atualizar a quantidade de produtos REMOVED no contato do cliente
         if urn is None or removed_count is None:
             msg = "Error: urn e removed_count são obrigatórios para update em contact_removed_count"
-            teste_local += msg + " - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += msg + " - "
+            return (False, debug_local) if debug is not None else False
         try:
             url = f"https://flows.weni.ai/api/v2/contacts.json?urn={urn}"
             headers = {
@@ -2299,16 +2450,16 @@ def contact_removed_count(contact_data, engine, request, removed_count=None, urn
             response = requests.post(url, json=payload, headers=headers)
             response.raise_for_status()
             success = response.status_code == 200
-            teste_local += f"contact_removed_count:update status={response.status_code} success={success} - "
-            return (success, teste_local) if teste is not None else success
+            debug_local += f"contact_removed_count:update status={response.status_code} success={success} - "
+            return (success, debug_local) if debug is not None else success
         except requests.exceptions.RequestException as e:
             engine.log.debug(f"Error updating Weni contact removed_count: {e}")
-            teste_local += f"contact_removed_count:update request_error={e} - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += f"contact_removed_count:update request_error={e} - "
+            return (False, debug_local) if debug is not None else False
         except Exception as e:
             engine.log.debug(f"Error updating Weni contact removed_count: {e}")
-            teste_local += f"contact_removed_count:update unexpected_error={e} - "
-            return (False, teste_local) if teste is not None else False
+            debug_local += f"contact_removed_count:update unexpected_error={e} - "
+            return (False, debug_local) if debug is not None else False
         
     # request == "extract" → apenas ler valor salvo no contato
     try:
@@ -2318,25 +2469,25 @@ def contact_removed_count(contact_data, engine, request, removed_count=None, urn
             raw_removed_count = contact_data["fields"].get("removed_count")
             if raw_removed_count is None or raw_removed_count == "":
                 removed_count_saved = 0
-                teste_local += "contact_removed_count:extract removed_count not set, defaulting to 0 - "
+                debug_local += "contact_removed_count:extract removed_count not set, defaulting to 0 - "
             else:
                 try:
                     removed_count_saved = int(raw_removed_count)
-                    teste_local += f"contact_removed_count:extract removed_count_raw={raw_removed_count} parsed={removed_count_saved} - "
+                    debug_local += f"contact_removed_count:extract removed_count_raw={raw_removed_count} parsed={removed_count_saved} - "
                 except (ValueError, TypeError) as e:
                     # Se vier algo inesperado, loga e assume 0
-                    teste_local += f"contact_removed_count:extract parse_error for '{raw_removed_count}' => {e}, using 0 - "
+                    debug_local += f"contact_removed_count:extract parse_error for '{raw_removed_count}' => {e}, using 0 - "
                     removed_count_saved = 0
-            return (removed_count_saved, teste_local) if teste is not None else removed_count_saved
+            return (removed_count_saved, debug_local) if debug is not None else removed_count_saved
     except (json.JSONDecodeError, KeyError, TypeError) as e:
         if engine:
-            teste_local += f"contact_removed_count:extract error={e} - "
-    return (0, teste_local) if teste is not None else 0
+            debug_local += f"contact_removed_count:extract error={e} - "
+    return (0, debug_local) if debug is not None else 0
 
     
 
 def Run(engine):
-    teste = "inicio - "
+    debug = "inicio - "
     #####################################################################
     # Essa etapa é a verificação para disparar flows (WhatsApp Flow via Meta),
     # independente do fluxo principal de substituição.
@@ -2352,9 +2503,9 @@ def Run(engine):
     # Log inicial para debug
     try:
         body_preview = str(engine.body)[:200] if hasattr(engine, 'body') and engine.body else "None"
-        teste += f"Run_inicio body_preview={body_preview} - "
+        debug += f"Run_inicio body_preview={body_preview} - "
     except Exception:
-        teste += "Run_inicio body_preview=erro_ao_ler - "
+        debug += "Run_inicio body_preview=erro_ao_ler - "
     
     # Tentar ler do body primeiro (POST com JSON)
     try:
@@ -2370,14 +2521,14 @@ def Run(engine):
                     try:
                         body_data = json.loads(engine.body)
                     except json.JSONDecodeError:
-                        teste += f"body_parse_erro_json body_preview={engine.body[:200]} - "
+                        debug += f"body_parse_erro_json body_preview={engine.body[:200]} - "
                         body_data = None
             else:
                 body_data = engine.body
             
             if isinstance(body_data, dict):
                 disparar_fluxo_weni = body_data.get("disparar_flow")
-                teste += f"body_detectado={bool(disparar_fluxo_weni)} - "
+                debug += f"body_detectado={bool(disparar_fluxo_weni)} - "
                 if disparar_fluxo_weni == "true" or disparar_fluxo_weni is True:
                     phone = body_data.get("phone")
                     produto_antigo_raw = body_data.get("produto_antigo")
@@ -2392,37 +2543,37 @@ def Run(engine):
                             try:
                                 produto_antigo = json.loads(produto_antigo_raw)
                             except json.JSONDecodeError as e:
-                                teste += f"body_produto_antigo_parse_erro={str(e)} - "
+                                debug += f"body_produto_antigo_parse_erro={str(e)} - "
                                 produto_antigo = None
                     else:
                         produto_antigo = produto_antigo_raw
-                    teste += f"body_parse_sucesso phone={bool(phone)} produto_antigo={bool(produto_antigo)} - "
+                    debug += f"body_parse_sucesso phone={bool(phone)} produto_antigo={bool(produto_antigo)} - "
     except (json.JSONDecodeError, AttributeError, TypeError) as e:
-        teste += f"body_parse_erro={str(e)} - "
+        debug += f"body_parse_erro={str(e)} - "
     
     # Fallback: tentar ler de params (GET ou query string)
     if not disparar_fluxo_weni:
         disparar_fluxo_weni = engine.params.get("disparar_flow") if hasattr(engine, "params") else None
-        teste += f"fallback_params_disparar={disparar_fluxo_weni} - "
+        debug += f"fallback_params_disparar={disparar_fluxo_weni} - "
     
     if disparar_fluxo_weni == "true" or disparar_fluxo_weni is True:
         # Se não pegou do body, tentar params
         if not phone and hasattr(engine, "params"):
             phone = engine.params.get("phone")
-            teste += f"param_phone={'ok' if phone else 'vazio'} - "
+            debug += f"param_phone={'ok' if phone else 'vazio'} - "
         if not produto_antigo and hasattr(engine, "params"):
             produto_antigo_raw = engine.params.get("produto_antigo")
             if produto_antigo_raw:
                 try:
                     produto_antigo = json.loads(produto_antigo_raw) if isinstance(produto_antigo_raw, str) else produto_antigo_raw
-                    teste += "param_produto_antigo_ok - "
+                    debug += "param_produto_antigo_ok - "
                 except (json.JSONDecodeError, TypeError):
-                    teste += "param_produto_antigo_parse_erro - "
+                    debug += "param_produto_antigo_parse_erro - "
 
         # Buscar produtos_escolhidos salvos nas variáveis de contato da Weni
         if phone:
             contact_data, urn = get_weni_contact_robust(phone, engine)
-            teste += f"flow_disparo: contact_data_obtido={bool(contact_data)} urn={urn} - "
+            debug += f"flow_disparo: contact_data_obtido={bool(contact_data)} urn={urn} - "
             raw_produtos = []
 
             if contact_data and isinstance(contact_data, dict):
@@ -2432,7 +2583,7 @@ def Run(engine):
                 chunk_keys = sorted(
                     k for k in contact_fields.keys() if str(k).startswith("items_part")
                 )
-                teste += f"flow_disparo: chunk_keys={chunk_keys if chunk_keys else 'nenhum'} - "
+                debug += f"flow_disparo: chunk_keys={chunk_keys if chunk_keys else 'nenhum'} - "
 
                 for key in chunk_keys:
                     raw_chunk = contact_fields.get(key)
@@ -2441,28 +2592,28 @@ def Run(engine):
                         try:
                             parsed_chunk = json.loads(sanitized_chunk)
                         except json.JSONDecodeError as e:
-                            teste += f"flow_disparo: erro_parse_{key}={e} - "
+                            debug += f"flow_disparo: erro_parse_{key}={e} - "
                             continue
 
                         if isinstance(parsed_chunk, dict):
                             chunk_items = parsed_chunk.get("items")
                             if isinstance(chunk_items, list):
                                 raw_produtos.extend(chunk_items)
-                                teste += f"flow_disparo: {key}_itens_dict={len(chunk_items)} - "
+                                debug += f"flow_disparo: {key}_itens_dict={len(chunk_items)} - "
                             else:
-                                teste += f"flow_disparo: {key}_sem_lista_items_dict - "
+                                debug += f"flow_disparo: {key}_sem_lista_items_dict - "
                         elif isinstance(parsed_chunk, list):
                             raw_produtos.extend(parsed_chunk)
-                            teste += f"flow_disparo: {key}_itens_list={len(parsed_chunk)} - "
+                            debug += f"flow_disparo: {key}_itens_list={len(parsed_chunk)} - "
                         else:
-                            teste += f"flow_disparo: {key}_tipo_inesperado={type(parsed_chunk)} - "
+                            debug += f"flow_disparo: {key}_tipo_inesperado={type(parsed_chunk)} - "
                     elif isinstance(raw_chunk, dict):
                         chunk_items = raw_chunk.get("items")
                         if isinstance(chunk_items, list):
                             raw_produtos.extend(chunk_items)
-                            teste += f"flow_disparo: {key}_itens_dict_direto={len(chunk_items)} - "
+                            debug += f"flow_disparo: {key}_itens_dict_direto={len(chunk_items)} - "
                         else:
-                            teste += f"flow_disparo: {key}_dict_sem_lista_items - "
+                            debug += f"flow_disparo: {key}_dict_sem_lista_items - "
 
             # Normalizar estrutura para o formato esperado por send_whatsapp_flow_after_weni
             if raw_produtos:
@@ -2497,13 +2648,13 @@ def Run(engine):
                         }
                     )
                 produtos_escolhidos = produtos_normalizados
-                teste += f"flow_disparo: produtos_escolhidos_recuperados={len(produtos_escolhidos)} - "
+                debug += f"flow_disparo: produtos_escolhidos_recuperados={len(produtos_escolhidos)} - "
             else:
-                teste += "flow_disparo: nenhum_produto_encontrado_nas_variaveis_de_contato - "
+                debug += "flow_disparo: nenhum_produto_encontrado_nas_variaveis_de_contato - "
 
         # Validar dados antes de processar
         if phone and produtos_escolhidos and produto_antigo:
-            teste += f"flow_dados_ok_enviando phone={bool(phone)} produtos_count={len(produtos_escolhidos) if produtos_escolhidos else 0} produto_antigo={bool(produto_antigo)} - "
+            debug += f"flow_dados_ok_enviando phone={bool(phone)} produtos_count={len(produtos_escolhidos) if produtos_escolhidos else 0} produto_antigo={bool(produto_antigo)} - "
             try:
                 send_success = send_whatsapp_flow_after_weni(
                     phone=phone,
@@ -2512,30 +2663,30 @@ def Run(engine):
                     engine=engine,
                     flow_id="1584991322669299",
                 )
-                teste += f"send_whatsapp_flow_after_weni retornou={send_success} - "
+                debug += f"send_whatsapp_flow_after_weni retornou={send_success} - "
                 engine.result.set({
                     "status": "Success",
                     "message": "Fluxo WhatsApp enviado com sucesso",
                     "send_success": send_success,
-                    "teste": teste
+                    "debug": debug
                 }, status_code=200, content_type="json")
                 return
             except Exception as e:
-                teste += f"flow_erro_ao_enviar_whatsapp={str(e)} - "
+                debug += f"flow_erro_ao_enviar_whatsapp={str(e)} - "
                 engine.result.set({
                     "status": "Error",
                     "error": f"Erro ao enviar fluxo WhatsApp: {str(e)}",
-                    "teste": teste
+                    "debug": debug
                 }, status_code=500, content_type="json")
                 return
         else:
-            teste += (
+            debug += (
                 f"flow_dados_faltando phone={bool(phone)} "
                 f"prod_escolhidos={bool(produtos_escolhidos)} prod_antigo={bool(produto_antigo)} - "
             )
             # Verificar se produtos_escolhidos é lista vazia (diferente de None)
             produtos_count = len(produtos_escolhidos) if produtos_escolhidos else 0
-            teste += f"flow_dados_faltando produtos_count={produtos_count} - "
+            debug += f"flow_dados_faltando produtos_count={produtos_count} - "
             engine.result.set({
                 "status": "Error",
                 "error": "Parâmetros obrigatórios ausentes ou dados não encontrados nas variáveis de contato",
@@ -2545,11 +2696,11 @@ def Run(engine):
                     "produto_antigo": not produto_antigo
                 },
                 "produtos_count": produtos_count,
-                "teste": teste,
+                "debug": debug,
             }, status_code=400, content_type="json")
             return
     else:
-        teste += "flow_nao_disparado_flag_false - "
+        debug += "flow_nao_disparado_flag_false - "
 
     #####################################################################
     # Essa etapa é a execução do processamento da substituição do produto
@@ -2641,7 +2792,7 @@ def Run(engine):
         if for_the_price_of:
             promotional_items.append(for_the_price_of)
     
-    teste = ""
+    debug = ""
     # Capturando o replacementMethod
     custom_apps = vtex_order.get("customData", {}).get("customApps", [])
     replacement_method = None
@@ -2668,10 +2819,10 @@ def Run(engine):
     # Calcular percentual baseado em SKUs únicos
     if total_unique_skus > 0 and (removed_count_unique / total_unique_skus) >= 0.5:
         percentual = (removed_count_unique / total_unique_skus) * 100
-        teste += f"removed_count: {removed_count_unique} (unique) - total_skus: {total_unique_skus} (unique) - removed_count_unique / total_unique_skus: {percentual:.2f}% - "
+        debug += f"removed_count: {removed_count_unique} (unique) - total_skus: {total_unique_skus} (unique) - removed_count_unique / total_unique_skus: {percentual:.2f}% - "
         #quando acima de 50% de produtos removidos, processar como contactConfirm 
         type_of_process = "contactConfirm"
-        teste += "50% removed - "
+        debug += "50% removed - "
 
 
 
@@ -2701,23 +2852,23 @@ def Run(engine):
         removed_ids = [str(item.get("id")) for item in removed_items if item.get("id")]
         if removed_ids and processed_skus and all(rid in processed_skus for rid in removed_ids):
             # Todos os SKUs REMOVED deste pedido já foram processados anteriormente
-            teste += f"verificacao_global: todas_skus_removed_ja_processadas removed_ids={removed_ids} processed_skus={processed_skus} - "
+            debug += f"verificacao_global: todas_skus_removed_ja_processadas removed_ids={removed_ids} processed_skus={processed_skus} - "
             
             # Se veio da fila, fazer pop para remover o item obsoleto da fila
             if client_reference_param is not None:
-                teste += f"pop_fila: removendo_da_fila_todas_skus_ja_processadas pedido={client_reference} - "
+                debug += f"pop_fila: removendo_da_fila_todas_skus_ja_processadas pedido={client_reference} - "
                 pop_result = pop_fila_from_codeaction(client_reference, engine)
                 if pop_result.get("success"):
-                    teste += f"pop_fila: SUCESSO pedido={client_reference} - "
+                    debug += f"pop_fila: SUCESSO pedido={client_reference} - "
                 else:
-                    teste += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
+                    debug += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
             
             engine.result.set(
                 {
                     "Status": "Success",
                     "type": replacement_method,
                     "message": "Todas as SKUs REMOVED deste pedido já foram processadas anteriormente. Nenhuma nova ação será realizada.",
-                    "teste": teste
+                    "debug": debug
                 },
                 status_code=409,  # Conflict - SKUs já processadas (conflito de estado)
                 content_type="json",
@@ -2733,46 +2884,46 @@ def Run(engine):
     #####################################################################
 
     # Garantir que phone está definido
-    teste += f"verificacao_novo_item: inicio - "
+    debug += f"verificacao_novo_item: inicio - "
     if not phone:
         recipient = input_data.get("job", {}).get("recipient", {})
         phone = recipient.get("phone_number", "")
-        teste += f"verificacao_novo_item: phone_obtido_do_recipient={bool(phone)} - "
+        debug += f"verificacao_novo_item: phone_obtido_do_recipient={bool(phone)} - "
     
     job_items = input_data.get("job", {}).get("job_items", [])
     length_of_job_items = len(job_items)
-    teste += f"verificacao_novo_item: length_of_job_items={length_of_job_items} - "
+    debug += f"verificacao_novo_item: length_of_job_items={length_of_job_items} - "
     
     if phone:
         contact_data, urn = get_weni_contact_robust(phone, engine)
-        teste += f"verificacao_novo_item: contact_data_obtido={bool(contact_data)} urn={urn} - "
-        length_of_weni, teste = contact_length_of_items(contact_data, engine, "extract", teste=teste)
-        teste += f"verificacao_novo_item: length_of_weni_extraido={length_of_weni} - "
+        debug += f"verificacao_novo_item: contact_data_obtido={bool(contact_data)} urn={urn} - "
+        length_of_weni, debug = contact_length_of_items(contact_data, engine, "extract", debug=debug)
+        debug += f"verificacao_novo_item: length_of_weni_extraido={length_of_weni} - "
     else:
-        teste += f"verificacao_novo_item: phone_nao_encontrado - "
+        debug += f"verificacao_novo_item: phone_nao_encontrado - "
         engine.result.set({
             "error": "phone não encontrado",
-            "teste": teste
+            "debug": debug
         }, status_code=400, content_type="json")
         return
 
     # Verificar se o pedido novo
     numero_pedido_weni = get_order_id_from_weni(contact_data, engine)
-    teste += f"verificacao_novo_item: numero_pedido_weni={numero_pedido_weni} client_reference={client_reference} - "
+    debug += f"verificacao_novo_item: numero_pedido_weni={numero_pedido_weni} client_reference={client_reference} - "
     if numero_pedido_weni and numero_pedido_weni != client_reference:
         # Pedido novo: considerar que não há SKUs processadas
-        teste += f"verificacao_novo_item: pedido_novo_detectado limpando_length_of_weni - "
+        debug += f"verificacao_novo_item: pedido_novo_detectado limpando_length_of_weni - "
         processed_skus = []
-        _, teste = update_weni_contact(urn, full_name, processed_skus, engine, order_id=client_reference, teste=teste)
-        _, teste = contact_length_of_items(contact_data, engine, "update", 0, urn, teste)
-        _, teste = contact_removed_count(contact_data, engine, "update", 0, urn, teste)
+        _, debug = update_weni_contact(urn, full_name, processed_skus, engine, order_id=client_reference, debug=debug)
+        _, debug = contact_length_of_items(contact_data, engine, "update", 0, urn, debug)
+        _, debug = contact_removed_count(contact_data, engine, "update", 0, urn, debug)
         length_of_weni = 0
-        teste += f"verificacao_novo_item: length_of_weni_resetado_para_0 removed_count_resetado_para_0 - "
+        debug += f"verificacao_novo_item: length_of_weni_resetado_para_0 removed_count_resetado_para_0 - "
     else:
         first_contact = False
 
-    teste += f"verificacao_novo_item: comparacao length_of_job_items={length_of_job_items} > length_of_weni={length_of_weni} (ou 0) - "
-    teste += f"verificacao_novo_item: condicao1={length_of_job_items > (length_of_weni or 0)} condicao2={length_of_weni is not None} condicao3={length_of_weni != 0} - "
+    debug += f"verificacao_novo_item: comparacao length_of_job_items={length_of_job_items} > length_of_weni={length_of_weni} (ou 0) - "
+    debug += f"verificacao_novo_item: condicao1={length_of_job_items > (length_of_weni or 0)} condicao2={length_of_weni is not None} condicao3={length_of_weni != 0} - "
     
     # VERIFICAÇÃO CRÍTICA: Antes de considerar como "novo item adicionado",
     # verificar se há itens REMOVED não processados. Se houver, processar mesmo que
@@ -2794,29 +2945,29 @@ def Run(engine):
             removed_ids_check = [str(item.get("id")) for item in removed_items if item.get("id")]
             unprocessed_removed = [rid for rid in removed_ids_check if rid and rid not in processed_skus_check]
             has_unprocessed_removed = len(unprocessed_removed) > 0
-            teste += f"verificacao_novo_item: verificacao_removed_nao_processados unprocessed_count={len(unprocessed_removed)} unprocessed_skus={unprocessed_removed} has_unprocessed_removed={has_unprocessed_removed} - "
+            debug += f"verificacao_novo_item: verificacao_removed_nao_processados unprocessed_count={len(unprocessed_removed)} unprocessed_skus={unprocessed_removed} has_unprocessed_removed={has_unprocessed_removed} - "
     
     if (length_of_job_items > (length_of_weni or 0)) and length_of_weni is not None and length_of_weni != 0:
         # Verificar se há REMOVED não processados antes de retornar como "novo item adicionado"
         if has_unprocessed_removed:
             # Há REMOVED não processados: continuar processamento mesmo que contagem tenha aumentado
-            teste += f"verificacao_novo_item: REMOVED_NAO_PROCESSADOS_DETECTADOS continuando_processamento_mesmo_com_contagem_maior - "
+            debug += f"verificacao_novo_item: REMOVED_NAO_PROCESSADOS_DETECTADOS continuando_processamento_mesmo_com_contagem_maior - "
         else:
             # Não há REMOVED não processados: tratar como "novo item adicionado"
-            teste += f"verificacao_novo_item: NOVO_ITEM_DETECTADO - "
-            teste += f"verificacao_novo_item: length_of_job_items={length_of_job_items} length_of_weni={length_of_weni} diferenca={length_of_job_items - length_of_weni} - "
+            debug += f"verificacao_novo_item: NOVO_ITEM_DETECTADO - "
+            debug += f"verificacao_novo_item: length_of_job_items={length_of_job_items} length_of_weni={length_of_weni} diferenca={length_of_job_items - length_of_weni} - "
             if contact_data and urn:
-                _, teste = contact_length_of_items(contact_data, engine, "update", length_of_job_items, urn, teste)
-                teste += f"verificacao_novo_item: length_of_items_atualizado_na_weni_para={length_of_job_items} - "
+                _, debug = contact_length_of_items(contact_data, engine, "update", length_of_job_items, urn, debug)
+                debug += f"verificacao_novo_item: length_of_items_atualizado_na_weni_para={length_of_job_items} - "
             else:
-                teste += f"verificacao_novo_item: AVISO_contact_data_ou_urn_nao_disponivel_para_update - "
+                debug += f"verificacao_novo_item: AVISO_contact_data_ou_urn_nao_disponivel_para_update - "
             
-            teste += f"verificacao_novo_item: retornando_notificacao_novo_item - "
+            debug += f"verificacao_novo_item: retornando_notificacao_novo_item - "
             engine.result.set({
                 "Status": "Success",
                 "type": replacement_method,
                 "message": "Notificação recebida após novo item ser adicionado ao pedido",
-                "teste": teste,
+                "debug": debug,
                 "length_of_job_items": length_of_job_items,
                 "length_of_weni": length_of_weni,
                 "client_reference": client_reference
@@ -2825,17 +2976,17 @@ def Run(engine):
     else:
         # Não é um novo item adicionado - pode ser pedido novo ou mesmo pedido
         if length_of_weni == 0:
-            teste += f"verificacao_novo_item: NAO_E_NOVO_ITEM length_of_weni=0 (pedido_novo_ou_primeira_vez) continuando_processamento - "
+            debug += f"verificacao_novo_item: NAO_E_NOVO_ITEM length_of_weni=0 (pedido_novo_ou_primeira_vez) continuando_processamento - "
         elif length_of_job_items <= length_of_weni:
-            teste += f"verificacao_novo_item: NAO_E_NOVO_ITEM length_of_job_items={length_of_job_items} <= length_of_weni={length_of_weni} continuando_processamento - "
+            debug += f"verificacao_novo_item: NAO_E_NOVO_ITEM length_of_job_items={length_of_job_items} <= length_of_weni={length_of_weni} continuando_processamento - "
         else:
-            teste += f"verificacao_novo_item: NAO_E_NOVO_ITEM condicao3_falhou (length_of_weni={length_of_weni} != 0) continuando_processamento - "
+            debug += f"verificacao_novo_item: NAO_E_NOVO_ITEM condicao3_falhou (length_of_weni={length_of_weni} != 0) continuando_processamento - "
 
     # Atualizar sempre o length_of_items com o valor atual de job_items,
-    # registrando logs na variável teste
-    teste += f"verificacao_novo_item: atualizando_length_of_items_para={length_of_job_items} - "
-    _, teste = contact_length_of_items(contact_data, engine, "update", length_of_job_items, urn, teste)
-    teste += f"verificacao_novo_item: length_of_items_atualizado continuando_para_processamento_substituicao - "
+    # registrando logs na variável debug
+    debug += f"verificacao_novo_item: atualizando_length_of_items_para={length_of_job_items} - "
+    _, debug = contact_length_of_items(contact_data, engine, "update", length_of_job_items, urn, debug)
+    debug += f"verificacao_novo_item: length_of_items_atualizado continuando_para_processamento_substituicao - "
 
 
     #####################################################################
@@ -2878,13 +3029,13 @@ def Run(engine):
                         # Se é um pedido novo (order_id diferente), limpar SKUs processadas
                         processed_skus = []  # Limpar lista de SKUs para novo pedido
                         # Atualizar order_id no contato
-                        _, teste = update_weni_contact(urn, full_name, [], engine, order_id=current_order_id, teste=teste if teste else "")
+                        _, debug = update_weni_contact(urn, full_name, [], engine, order_id=current_order_id, debug=debug if debug else "")
                     else:
                         # Mesmo pedido ou primeiro pedido, usar SKUs processadas existentes
                         processed_skus = get_processed_skus_from_weni(contact_data, engine)
                         if not order_id and current_order_id:
                             # Primeira vez, atualizar order_id
-                            _, teste = update_weni_contact(urn, full_name, processed_skus, engine, order_id=current_order_id, teste=teste if teste else "")
+                            _, debug = update_weni_contact(urn, full_name, processed_skus, engine, order_id=current_order_id, debug=debug if debug else "")
             
             # Verificar SKUs para processar (filtrar apenas as não processadas)
             skus_to_process = [item for item in removed_items if item.get("id") and str(item.get("id")) not in processed_skus]
@@ -2896,7 +3047,7 @@ def Run(engine):
                     "type": replacement_method,
                     "error": f"nenhuma SKU para verificar, SKUs já verificadas: {removed_skus}",
                     "remove": True,
-                    "teste": teste,
+                    "debug": debug,
                 }
                 status_code = 409  # Conflict - SKUs já processadas
             else:
@@ -2906,23 +3057,23 @@ def Run(engine):
                     if not product_id:
                         continue
                     
-                    ruptura_success, teste_instaleap = send_instaleap_external_data(
+                    ruptura_success, debug_instaleap = send_instaleap_external_data(
                         order_id=client_reference,
                         product_id=product_id,
                         ruptura_message="AUT REMOÇÃO - NO_REPLACEMENT",
-                        teste=teste
+                        debug=debug
                     )
-                    teste = teste_instaleap
+                    debug = debug_instaleap
                     if not ruptura_success:
-                        teste += f"send_instaleap_external_data: retornou_False para produto {product_id} - "
+                        debug += f"send_instaleap_external_data: retornou_False para produto {product_id} - "
                     
                     # Registrar SKU como processada
                     if phone and urn:
                         if product_id not in processed_skus:
                             updated_skus = processed_skus + [product_id]
-                            teste += f"noReplacement: ANTES_SALVAR_SKU product_id={product_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-                            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=client_reference, teste=teste)
-                            teste += f"noReplacement: DEPOIS_SALVAR_SKU save_success={save_success} product_id={product_id} - "
+                            debug += f"noReplacement: ANTES_SALVAR_SKU product_id={product_id} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+                            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=client_reference, debug=debug)
+                            debug += f"noReplacement: DEPOIS_SALVAR_SKU save_success={save_success} product_id={product_id} - "
                             
                             # Verificar se o SKU foi realmente salvo fazendo uma leitura
                             if save_success and urn:
@@ -2931,23 +3082,23 @@ def Run(engine):
                                     if contact_data_verify:
                                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                                         sku_salvo = str(product_id) in processed_skus_verify
-                                        teste += f"noReplacement: VERIFICACAO_SALVAMENTO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                                        debug += f"noReplacement: VERIFICACAO_SALVAMENTO sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                                     else:
-                                        teste += f"noReplacement: VERIFICACAO_SALVAMENTO contact_data_verify=None - "
+                                        debug += f"noReplacement: VERIFICACAO_SALVAMENTO contact_data_verify=None - "
                                 except Exception as e:
-                                    teste += f"noReplacement: ERRO_VERIFICACAO_SALVAMENTO={str(e)} - "
+                                    debug += f"noReplacement: ERRO_VERIFICACAO_SALVAMENTO={str(e)} - "
                             else:
-                                teste += f"noReplacement: NAO_VERIFICOU_SALVAMENTO save_success={save_success} urn={urn} - "
+                                debug += f"noReplacement: NAO_VERIFICOU_SALVAMENTO save_success={save_success} urn={urn} - "
                             
                             processed_skus = updated_skus  # Atualizar lista local
                         else:
-                            teste += f"noReplacement: SKU_JA_PROCESSADO product_id={product_id} processed_skus={processed_skus} - "
+                            debug += f"noReplacement: SKU_JA_PROCESSADO product_id={product_id} processed_skus={processed_skus} - "
                 
                 result = {
                     "Status": "Success",
                     "type": replacement_method,
                     "message": "Itens removidos sem substituição.",
-                    "teste": teste,
+                    "debug": debug,
                 }
                 status_code = 200
         else:
@@ -2957,7 +3108,7 @@ def Run(engine):
                 "action": "removed",
                 "items_removed": [],
                 "message": "Nenhum item removido para processar.",
-                "teste": teste,
+                "debug": debug,
             }
             status_code = 200
 
@@ -2969,7 +3120,7 @@ def Run(engine):
 
         # Processamento para método contactConfirm
         if replacement_method == "contactConfirm" or type_of_process == "contactConfirm":
-            teste += "replacement_method == contactConfirm ou type_of_process == contactConfirm - "
+            debug += "replacement_method == contactConfirm ou type_of_process == contactConfirm - "
             
             # Obter dados do cliente e contato
             recipient_tmp = input_data.get("job", {}).get("recipient", {})
@@ -2980,7 +3131,7 @@ def Run(engine):
             removed_ids_unique = list(dict.fromkeys(removed_ids_tmp))  # Remove duplicatas mantendo ordem
             removed_count_notification = len(removed_ids_unique)
             
-            teste += f"verificacao_multiplos_removed: removed_count_notification={removed_count_notification} removed_ids={removed_ids_tmp} removed_ids_unique={removed_ids_unique} - "
+            debug += f"verificacao_multiplos_removed: removed_count_notification={removed_count_notification} removed_ids={removed_ids_tmp} removed_ids_unique={removed_ids_unique} - "
             
             # Verificar se é pedido novo e obter SKUs processadas
             contact_data_tmp = None
@@ -3000,15 +3151,15 @@ def Run(engine):
                         # Pedido novo: resetar contagem
                         is_new_order = True
                         removed_count_saved_weni = 0
-                        teste += f"verificacao_multiplos_removed: PEDIDO_NOVO order_id_weni={order_id_weni} current={current_order_id} - "
+                        debug += f"verificacao_multiplos_removed: PEDIDO_NOVO order_id_weni={order_id_weni} current={current_order_id} - "
                         # Atualizar removed_count para 0 e order_id
-                        _, teste = contact_removed_count(contact_data_tmp, engine, "update", 0, urn_tmp, teste)
-                        _, teste = update_weni_contact(urn_tmp, recipient_tmp.get("name", ""), [], engine, order_id=current_order_id, teste=teste)
+                        _, debug = contact_removed_count(contact_data_tmp, engine, "update", 0, urn_tmp, debug)
+                        _, debug = update_weni_contact(urn_tmp, recipient_tmp.get("name", ""), [], engine, order_id=current_order_id, debug=debug)
                     else:
                         # Mesmo pedido: obter SKUs processadas e removed_count salvo
                         processed_skus_tmp = get_processed_skus_from_weni(contact_data_tmp, engine)
-                        removed_count_saved_weni, teste = contact_removed_count(contact_data_tmp, engine, "extract", teste=teste)
-                        teste += f"verificacao_multiplos_removed: MESMO_PEDIDO processed_skus={processed_skus_tmp} removed_count_saved={removed_count_saved_weni} - "
+                        removed_count_saved_weni, debug = contact_removed_count(contact_data_tmp, engine, "extract", debug=debug)
+                        debug += f"verificacao_multiplos_removed: MESMO_PEDIDO processed_skus={processed_skus_tmp} removed_count_saved={removed_count_saved_weni} - "
             
             # Identificar SKUs novos (não processados)
             # Usar removed_ids_unique para evitar problemas com duplicatas
@@ -3017,13 +3168,13 @@ def Run(engine):
             
             # Se houver duplicatas em removed_ids_tmp, logar para debug
             if len(removed_ids_tmp) != len(removed_ids_unique):
-                teste += f"verificacao_multiplos_removed: DUPLICATAS_DETECTADAS removed_ids_tmp_count={len(removed_ids_tmp)} removed_ids_unique_count={len(removed_ids_unique)} - "
+                debug += f"verificacao_multiplos_removed: DUPLICATAS_DETECTADAS removed_ids_tmp_count={len(removed_ids_tmp)} removed_ids_unique_count={len(removed_ids_unique)} - "
             
-            teste += f"verificacao_multiplos_removed: new_skus={new_skus} new_skus_count={new_skus_count} - "
+            debug += f"verificacao_multiplos_removed: new_skus={new_skus} new_skus_count={new_skus_count} - "
             
             # Verificar se há múltiplos SKUs novos (>= 2) e se a quantidade na notificação é maior em 2+ unidades
             json_da_fila = get_fila_from_codeaction(client_reference, engine)
-            teste += f"get_fila: resultado={'encontrado' if json_da_fila else 'vazio'} pedido={client_reference} - "
+            debug += f"get_fila: resultado={'encontrado' if json_da_fila else 'vazio'} pedido={client_reference} - "
             
             # Salvar estado inicial da fila ANTES de fazer push (para usar na verificação de item promocional)
             fila_inicial_vazia = (json_da_fila is None)
@@ -3037,16 +3188,16 @@ def Run(engine):
                     # Caso especial: múltiplos SKUs novos na notificação E quantidade maior em 2+
                     # Processar o primeiro e fazer push dos outros na fila
                     should_split_processing = True
-                    teste += f"verificacao_multiplos_removed: MULTIPLOS_REMOVED_DETECTADOS (new_skus={new_skus_count}, notif={removed_count_notification} >= saved+2={removed_count_saved_weni}+2) - "
+                    debug += f"verificacao_multiplos_removed: MULTIPLOS_REMOVED_DETECTADOS (new_skus={new_skus_count}, notif={removed_count_notification} >= saved+2={removed_count_saved_weni}+2) - "
                 else:
-                    teste += f"verificacao_multiplos_removed: new_skus={new_skus_count} mas notif={removed_count_notification} < saved+2={removed_count_saved_weni}+2 - NAO_SPLIT - "
+                    debug += f"verificacao_multiplos_removed: new_skus={new_skus_count} mas notif={removed_count_notification} < saved+2={removed_count_saved_weni}+2 - NAO_SPLIT - "
             
             if should_split_processing:
                 # Quando há múltiplos SKUs novos, processamos o primeiro e fazemos push do JSON original na fila
                 # Apenas para os SKUs restantes (a partir do índice 1), pois o primeiro será processado imediatamente
                 first_sku_id = new_skus[0]
                 other_skus = new_skus[1:]
-                teste += f"verificacao_multiplos_removed: MULTIPLOS_REMOVED - processando_primeiro_sku={first_sku_id} outros_skus={other_skus} - "
+                debug += f"verificacao_multiplos_removed: MULTIPLOS_REMOVED - processando_primeiro_sku={first_sku_id} outros_skus={other_skus} - "
                 
                 # Fazer push do JSON original completo na fila UMA VEZ PARA CADA SKU RESTANTE
                 # O primeiro SKU será processado imediatamente nesta execução, então não deve ir para a fila.
@@ -3064,34 +3215,34 @@ def Run(engine):
                         if push_result_others.get("success"):
                             push_success_count += 1
                             push_result_split = push_result_others
-                            teste += f"push_fila: SUCESSO JSON_enviado_para_fila_para_SKU_restante={sku_restante} - "
+                            debug += f"push_fila: SUCESSO JSON_enviado_para_fila_para_SKU_restante={sku_restante} - "
                         else:
-                            teste += f"push_fila: ERRO ao_enviar_JSON_para_fila_para_SKU_restante={sku_restante} mensagem={push_result_others.get('message')} - "
+                            debug += f"push_fila: ERRO ao_enviar_JSON_para_fila_para_SKU_restante={sku_restante} mensagem={push_result_others.get('message')} - "
                 
                 # Preservar push_result para usar depois na verificação de remoção da fila
                 # Log de debug para verificar o estado de push_result_split antes da condição
-                teste += f"verificacao_multiplos_removed: antes_preservacao push_result_split_existe={push_result_split is not None} - "
+                debug += f"verificacao_multiplos_removed: antes_preservacao push_result_split_existe={push_result_split is not None} - "
                 if push_result_split:
                     push_result_split_success = push_result_split.get('success', False)
                     push_result_split_msg = push_result_split.get('message', 'N/A')[:50] if push_result_split.get('message') else 'N/A'
-                    teste += f"verificacao_multiplos_removed: push_result_split_success={push_result_split_success} push_result_split_msg={push_result_split_msg} - "
+                    debug += f"verificacao_multiplos_removed: push_result_split_success={push_result_split_success} push_result_split_msg={push_result_split_msg} - "
                 
                 if push_result_split and push_result_split.get("success"):
                     push_result = push_result_split
-                    teste += f"verificacao_multiplos_removed: push_result_preservado_do_split success=True push_result_agora={push_result is not None} - "
+                    debug += f"verificacao_multiplos_removed: push_result_preservado_do_split success=True push_result_agora={push_result is not None} - "
                 else:
-                    teste += f"verificacao_multiplos_removed: push_result_NAO_preservado push_result_split_existe={push_result_split is not None} push_result_split_success={push_result_split.get('success') if push_result_split else None} - "
+                    debug += f"verificacao_multiplos_removed: push_result_NAO_preservado push_result_split_existe={push_result_split is not None} push_result_split_success={push_result_split.get('success') if push_result_split else None} - "
                 
                 # Atualizar removed_count na Weni
                 if contact_data_tmp and urn_tmp:
-                    _, teste = contact_removed_count(contact_data_tmp, engine, "update", removed_count_notification, urn_tmp, teste)
-                    teste += f"verificacao_multiplos_removed: removed_count_atualizado={removed_count_notification} - "
+                    _, debug = contact_removed_count(contact_data_tmp, engine, "update", removed_count_notification, urn_tmp, debug)
+                    debug += f"verificacao_multiplos_removed: removed_count_atualizado={removed_count_notification} - "
                 
                 # Se já houver itens na fila E esta notificação não veio da fila (client_reference_param é None),
                 # não devemos iniciar um novo fluxo agora para o primeiro SKU.
                 # Deixamos apenas o JSON na fila e retornamos 202 "Na fila, esperando processamento".
                 if not fila_inicial_vazia and client_reference_param is None:
-                    teste += (
+                    debug += (
                         "verificacao_multiplos_removed: FILA_JA_ATIVA_apenas_push_sem_novo_fluxo_para_primeiro_sku "
                         f"first_sku_id={first_sku_id} fila_inicial_vazia={fila_inicial_vazia} - "
                     )
@@ -3100,7 +3251,7 @@ def Run(engine):
                             "Status": "Na fila, esperando processamento",
                             "type": replacement_method,
                             "sku_original": first_sku_id,
-                            "teste": teste,
+                            "debug": debug,
                         },
                         status_code=202,
                         content_type="json",
@@ -3110,14 +3261,14 @@ def Run(engine):
                 # Caso contrário (fila estava vazia ou veio da fila), o processamento normal
                 # continuará e processará apenas o primeiro SKU novo, pois
                 # process_product_replacement identifica SKUs não processados automaticamente.
-                teste += f"verificacao_multiplos_removed: processamento_normal_continuara_com_primeiro_sku={first_sku_id} - "
+                debug += f"verificacao_multiplos_removed: processamento_normal_continuara_com_primeiro_sku={first_sku_id} - "
             
             # Continuar com lógica normal
             sku_original = None
             if new_skus:
                 sku_original = new_skus[0]
             
-            teste += f"sku_original_em_avaliacao={sku_original} processed_skus={processed_skus_tmp} - "
+            debug += f"sku_original_em_avaliacao={sku_original} processed_skus={processed_skus_tmp} - "
 
             # Verificar fila e fazer push (se não foi feito no split)
             # push_result já pode ter sido definido no split (linha 2715), então não sobrescrever aqui
@@ -3127,7 +3278,7 @@ def Run(engine):
                 is_sku_promotional = False
                 if sku_original and promotional_items:
                     is_sku_promotional = str(sku_original) in [str(pi) for pi in promotional_items]
-                    teste += f"verificacao_pre_push: sku_original={sku_original} is_promotional={is_sku_promotional} - "
+                    debug += f"verificacao_pre_push: sku_original={sku_original} is_promotional={is_sku_promotional} - "
                 
                 # Se a fila estiver vazia, é o primeiro contato com o cliente -> push e start_weni_flow
                 # EXCETO se for item promocional (itens promocionais são processados diretamente quando a fila está vazia)
@@ -3135,64 +3286,67 @@ def Run(engine):
                     if is_sku_promotional:
                         # Item promocional com fila vazia: não fazer push, será processado diretamente
                         start_flow = True
-                        teste += f"push_fila: fila_vazia_item_promocional_nao_fazendo_push processamento_direto pedido={client_reference} - "
+                        debug += f"push_fila: fila_vazia_item_promocional_nao_fazendo_push processamento_direto pedido={client_reference} - "
                     else:
                         # Item normal com fila vazia: fazer push normalmente
                         start_flow = True
-                        teste += f"push_fila: fila_vazia_iniciando_push pedido={client_reference} - "
+                        debug += f"push_fila: fila_vazia_iniciando_push pedido={client_reference} - "
                         push_result = push_fila_from_codeaction(client_reference, input_data, engine)
                         if push_result.get("success"):
-                            teste += f"push_fila: SUCESSO pedido={client_reference} - "
+                            debug += f"push_fila: SUCESSO pedido={client_reference} - "
                         else:
                             error_msg = push_result.get('message', 'Erro desconhecido')
-                            teste += f"push_fila: ERRO pedido={client_reference} mensagem={error_msg} - "
+                            debug += f"push_fila: ERRO pedido={client_reference} mensagem={error_msg} - "
                 # Se a fila não estiver vazia e start_flow for False, é um contato subsequente -> apenas PUSH
                 # EXCETO se for item promocional (itens promocionais têm lógica especial mais abaixo)
                 elif not start_flow:
                     # Verificar se é promocional ANTES de fazer push
                     # Se for promocional, não fazer push aqui - deixar o bloco de item promocional fazer
                     if is_sku_promotional:
-                        teste += f"push_fila: item_promocional_com_fila_ativa_nao_fazendo_push_aqui (sera_feito_no_bloco_promocional) pedido={client_reference} - "
+                        debug += f"push_fila: item_promocional_com_fila_ativa_nao_fazendo_push_aqui (sera_feito_no_bloco_promocional) pedido={client_reference} - "
                         start_flow = True  # Permitir processamento para chegar no bloco promocional
                     else:
-                        teste += f"push_fila: contato_subsequente_iniciando_push pedido={client_reference} - "
+                        debug += f"push_fila: contato_subsequente_iniciando_push pedido={client_reference} - "
                     push_result = push_fila_from_codeaction(client_reference, input_data, engine)
                     if push_result.get("success"):
-                        teste += f"push_fila: SUCESSO pedido={client_reference} - "
+                        debug += f"push_fila: SUCESSO pedido={client_reference} - "
                         engine.result.set({
                             "Status": "Na fila, esperando processamento",
                             "type": replacement_method,
                             "sku_original": sku_original,
-                            "teste": teste,
+                            "debug": debug,
                         }, status_code=202, content_type="json")  # Accepted - processamento assíncrono iniciado
                         return
                     else:
                         error_msg = push_result.get('message', 'Erro desconhecido')
-                        teste += f"push_fila: ERRO pedido={client_reference} mensagem={error_msg} - "
+                        debug += f"push_fila: ERRO pedido={client_reference} mensagem={error_msg} - "
             else:
                 # Se should_split_processing, start_flow será True para processar o primeiro SKU
                 # O push já foi feito no bloco should_split_processing
                 start_flow = True
-                teste += f"verificacao_multiplos_removed: start_flow=True para_processar_primeiro_sku (push_ja_realizado) - "
+                debug += f"verificacao_multiplos_removed: start_flow=True para_processar_primeiro_sku (push_ja_realizado) - "
             
             # Se não for split, atualizar removed_count na Weni se necessário
             if not should_split_processing and contact_data_tmp and urn_tmp and removed_count_notification > removed_count_saved_weni:
-                _, teste = contact_removed_count(contact_data_tmp, engine, "update", removed_count_notification, urn_tmp, teste)
-                teste += f"verificacao_multiplos_removed: removed_count_atualizado={removed_count_notification} - "
+                _, debug = contact_removed_count(contact_data_tmp, engine, "update", removed_count_notification, urn_tmp, debug)
+                debug += f"verificacao_multiplos_removed: removed_count_atualizado={removed_count_notification} - "
             
-        teste += f"processamento_substituicao: iniciando_process_product_replacement replacement_method={replacement_method} client_reference={client_reference} - "
-        process_result = process_product_replacement(input_data, vtex_order, replacement_method, engine, client_reference=client_reference, promotional_items=promotional_items, teste=teste)
-        teste = process_result.get("teste", "")
-        teste += f"processamento_substituicao: process_result_obtido remove={process_result.get('remove', True)} type={process_result.get('type')} error={process_result.get('error', 'N/A')} - "
+        debug += f"processamento_substituicao: iniciando_process_product_replacement replacement_method={replacement_method} client_reference={client_reference} - "
+        process_result = process_product_replacement(input_data, vtex_order, replacement_method, engine, client_reference=client_reference, promotional_items=promotional_items, debug=debug)
+        debug = process_result.get("debug", "")
+        debug += f"processamento_substituicao: process_result_obtido remove={process_result.get('remove', True)} type={process_result.get('type')} error={process_result.get('error', 'N/A')} - "
 
         # Se o processo de substituição resultou em remoção, enviar ruptura para o Instaleap. Removendo por que é um item promocional ou não foram encontrados produtos similares.
         instaleap_success = False  # inicializar para evitar UnboundLocalError
         flow_started = False  # Inicializar flow_started para evitar UnboundLocalError
         if process_result.get("remove", True):
-            teste += f"processamento_substituicao: REMOCAO_DETECTADA enviando_ruptura_instaleap - "
+            debug += f"processamento_substituicao: REMOCAO_DETECTADA enviando_ruptura_instaleap - "
             original_sku = str(process_result.get("produto_antigo", {}).get("sku", "") or "").strip()
             error_msg = process_result.get("error", "")
             is_promotional = "PROMOCIONAL" in error_msg
+            # Controla se a ruptura deve ser tratada apenas pela jornada desestruturada
+            # (nesses casos não enviamos external data para evitar duplicidade de fluxos).
+            sent_to_destructured_journey = False
 
             #################################################################
             # NOVO COMPORTAMENTO: contactConfirm SEM OPÇÕES
@@ -3213,17 +3367,17 @@ def Run(engine):
                     # Verificar se veio da fila (se já está sendo processado)
                     if client_reference_param is not None:
                         # Veio da fila: processar imediatamente
-                        teste += "processamento_substituicao: contactConfirm_sem_opcoes_veio_da_fila processando_imediatamente - "
+                        debug += "processamento_substituicao: contactConfirm_sem_opcoes_veio_da_fila processando_imediatamente - "
                         processar_imediatamente = True
                     else:
                         # Não veio da fila: verificar se há fila ativa ANTES de disparar
                         # Usar o estado inicial da fila (antes do push) salvo anteriormente
                         fila_ativa_antes_do_processamento = not fila_inicial_vazia
-                        teste += f"processamento_substituicao: contactConfirm_sem_opcoes_verificando_fila fila_ativa_antes_do_processamento={fila_ativa_antes_do_processamento} fila_inicial_vazia={fila_inicial_vazia} - "
+                        debug += f"processamento_substituicao: contactConfirm_sem_opcoes_verificando_fila fila_ativa_antes_do_processamento={fila_ativa_antes_do_processamento} fila_inicial_vazia={fila_inicial_vazia} - "
                         
                         if fila_ativa_antes_do_processamento:
                             # Há fila ativa: cliente está em conversa -> fazer push na fila e retornar
-                            teste += f"processamento_substituicao: contactConfirm_sem_opcoes_FILA_ATIVA fazendo_push_na_fila - "
+                            debug += f"processamento_substituicao: contactConfirm_sem_opcoes_FILA_ATIVA fazendo_push_na_fila - "
                             
                             recipient = input_data.get("job", {}).get("recipient", {})
                             phone = recipient.get("phone_number", "")
@@ -3232,18 +3386,18 @@ def Run(engine):
                             # Salvar lista vazia de produtos_escolhidos na Weni ANTES de fazer push
                             if phone:
                                 urn = format_phone_to_urn(phone)
-                                save_ok, teste_save = save_produtos_escolhidos_to_weni(
+                                save_ok, debug_save = save_produtos_escolhidos_to_weni(
                                     urn=urn,
                                     produtos_escolhidos=[],  # Sem opções de substituição
                                     engine=engine,
                                 )
-                                teste += teste_save
-                                teste += f"processamento_substituicao: contactConfirm_sem_opcoes_produtos_vazios_salvos_na_weni save_ok={save_ok} - "
+                                debug += debug_save
+                                debug += f"processamento_substituicao: contactConfirm_sem_opcoes_produtos_vazios_salvos_na_weni save_ok={save_ok} - "
                             
                             # Fazer push do JSON na fila
                             push_result_sem_opcoes = push_fila_from_codeaction(client_reference, input_data, engine)
                             if push_result_sem_opcoes.get("success"):
-                                teste += f"processamento_substituicao: contactConfirm_sem_opcoes_push_SUCESSO - "
+                                debug += f"processamento_substituicao: contactConfirm_sem_opcoes_push_SUCESSO - "
                                 # Preservar push_result para uso posterior
                                 if push_result is None:
                                     push_result = push_result_sem_opcoes
@@ -3253,17 +3407,17 @@ def Run(engine):
                                     "type": replacement_method,
                                     "sku_original": original_sku,
                                     "message": "Item sem opções - aguardando processamento na fila",
-                                    "teste": teste,
+                                    "debug": debug,
                                 }, status_code=202, content_type="json")
                                 return
                             else:
                                 error_msg_push = push_result_sem_opcoes.get('message', 'Erro desconhecido')
-                                teste += f"processamento_substituicao: contactConfirm_sem_opcoes_push_ERRO mensagem={error_msg_push} - "
+                                debug += f"processamento_substituicao: contactConfirm_sem_opcoes_push_ERRO mensagem={error_msg_push} - "
                                 # Se push falhar, continuar com processamento imediato (fallback)
                                 processar_imediatamente = True
                         else:
                             # Fila vazia: processar imediatamente
-                            teste += "processamento_substituicao: contactConfirm_sem_opcoes_FILA_VAZIA processando_imediatamente - "
+                            debug += "processamento_substituicao: contactConfirm_sem_opcoes_FILA_VAZIA processando_imediatamente - "
                             processar_imediatamente = True
                     
                     # Processar imediatamente apenas se não houver fila ativa ou se veio da fila
@@ -3307,26 +3461,26 @@ def Run(engine):
                                 }
                                 payload = {"fields": fields}
                                 
-                                teste += f"jornada_desestruturada: salvando_item_faltando sku={item_faltando_info['sku']} quantity={item_faltando_info['quantity']} - "
+                                debug += f"jornada_desestruturada: salvando_item_faltando sku={item_faltando_info['sku']} quantity={item_faltando_info['quantity']} - "
                                 
                                 # Timeout reduzido para evitar timeout do contexto de requisição
                                 response = requests.post(url, json=payload, headers=headers, timeout=15)
                                 response.raise_for_status()
                                 
                                 success = 200 <= response.status_code < 300
-                                teste += f"jornada_desestruturada: item_faltando_salvo_na_weni success={success} status={response.status_code} - "
+                                debug += f"jornada_desestruturada: item_faltando_salvo_na_weni success={success} status={response.status_code} - "
                                 
                             except requests.exceptions.RequestException as e:
-                                teste += f"jornada_desestruturada: erro_ao_salvar_item_faltando request_error={str(e)} - "
+                                debug += f"jornada_desestruturada: erro_ao_salvar_item_faltando request_error={str(e)} - "
                             except Exception as e:
-                                teste += f"jornada_desestruturada: erro_ao_salvar_item_faltando unexpected_error={type(e).__name__}:{str(e)} - "
+                                debug += f"jornada_desestruturada: erro_ao_salvar_item_faltando unexpected_error={type(e).__name__}:{str(e)} - "
                         else:
-                            teste += f"jornada_desestruturada: phone_vazio_nao_pode_salvar_item_faltando - "
+                            debug += f"jornada_desestruturada: phone_vazio_nao_pode_salvar_item_faltando - "
                         #################################################################
 
                     # Disparar fluxo Weni com is_journey=True e is_promotional=False
                     if phone:
-                        flow_started, teste = start_weni_flow(
+                        flow_started, debug = start_weni_flow(
                             phone=phone,
                             produtos_escolhidos=[],
                             produto_antigo=produto_antigo,
@@ -3337,21 +3491,22 @@ def Run(engine):
                             first_contact=first_contact,
                             is_promotional=False,
                             is_journey=True,
-                            teste=teste,
+                            debug=debug,
                         )
-                        teste += f"processamento_substituicao: contactConfirm_sem_opcoes_start_weni_flow_retornou flow_started={flow_started} - "
+                        sent_to_destructured_journey = True
+                        debug += f"processamento_substituicao: contactConfirm_sem_opcoes_start_weni_flow_retornou flow_started={flow_started} - "
                 except Exception as e:
                     # Não quebrar o fluxo principal em caso de erro ao disparar o fluxo Weni
-                    teste += f"processamento_substituicao: contactConfirm_sem_opcoes_erro_ao_disparar_fluxo_weni={e} - "
+                    debug += f"processamento_substituicao: contactConfirm_sem_opcoes_erro_ao_disparar_fluxo_weni={e} - "
 
             # Se for item promocional, verificar se deve ir para fila ou processar imediatamente
             if is_promotional:
-                teste += f"processamento_substituicao: ITEM_PROMOCIONAL detectado - "
+                debug += f"processamento_substituicao: ITEM_PROMOCIONAL detectado - "
                 
                 # Se veio da fila (client_reference_param definido), processar imediatamente
                 # Não verificar fila ativa, pois já está sendo processado da fila
                 if client_reference_param is not None:
-                    teste += f"processamento_substituicao: item_promocional_veio_da_fila processando_imediatamente - "
+                    debug += f"processamento_substituicao: item_promocional_veio_da_fila processando_imediatamente - "
                     fila_ativa_antes_do_push = False  # Forçar processamento imediato quando vem da fila
                 else:
                     # Verificar se há fila ativa (cliente em conversa) antes de processar item promocional
@@ -3359,14 +3514,14 @@ def Run(engine):
                     # Se houver fila ativa ANTES do push, o item promocional deve ir para a fila
                     # Se a fila estava vazia ANTES do push, processar imediatamente (mesmo que tenha feito push nesta execução)
                     fila_ativa_antes_do_push = not fila_inicial_vazia
-                    teste += f"processamento_substituicao: verificando_fila_para_item_promocional fila_ativa_antes_do_push={fila_ativa_antes_do_push} fila_inicial_vazia={fila_inicial_vazia} - "
+                    debug += f"processamento_substituicao: verificando_fila_para_item_promocional fila_ativa_antes_do_push={fila_ativa_antes_do_push} fila_inicial_vazia={fila_inicial_vazia} - "
                 
                 push_result_promocional = None  # Inicializar para evitar UnboundLocalError
                 item_promocional_foi_para_fila = False  # Flag para indicar se item promocional foi para fila
                 
                 if fila_ativa_antes_do_push:
                     # Há fila ativa: cliente está em conversa -> item promocional deve ir para fila
-                    teste += f"processamento_substituicao: FILA_ATIVA_DETECTADA item_promocional_ira_para_fila - "
+                    debug += f"processamento_substituicao: FILA_ATIVA_DETECTADA item_promocional_ira_para_fila - "
                     recipient = input_data.get("job", {}).get("recipient", {})
                     phone = recipient.get("phone_number", "")
                     full_name = recipient.get("name", "")
@@ -3376,22 +3531,22 @@ def Run(engine):
                     # Salvar produtos_escolhidos vazio na Weni para item promocional
                     if phone:
                         urn = format_phone_to_urn(phone)
-                        save_ok, teste_save = save_produtos_escolhidos_to_weni(
+                        save_ok, debug_save = save_produtos_escolhidos_to_weni(
                             urn=urn,
                             produtos_escolhidos=[],  # Lista vazia para itens promocionais
                             engine=engine,
                         )
-                        teste += teste_save
-                        teste += f"processamento_substituicao: produtos_escolhidos_vazios_salvos_na_weni_para_item_promocional save_ok={save_ok} - "
+                        debug += debug_save
+                        debug += f"processamento_substituicao: produtos_escolhidos_vazios_salvos_na_weni_para_item_promocional save_ok={save_ok} - "
                     
                     # Fazer push do JSON para a fila (não disparar fluxo imediatamente)
-                    teste += f"processamento_substituicao: fazendo_push_item_promocional_para_fila - "
+                    debug += f"processamento_substituicao: fazendo_push_item_promocional_para_fila - "
                     push_result_promocional = push_fila_from_codeaction(client_reference, input_data, engine)
                     if push_result_promocional.get("success"):
-                        teste += f"processamento_substituicao: push_item_promocional_para_fila_SUCESSO - "
+                        debug += f"processamento_substituicao: push_item_promocional_para_fila_SUCESSO - "
                         # NÃO enviar ruptura para Instaleap quando vai para fila
                         # A ruptura será enviada quando o item for processado da fila (para evitar duplicação)
-                        teste += f"processamento_substituicao: ruptura_instaleap_sera_enviada_quando_item_for_processado_da_fila - "
+                        debug += f"processamento_substituicao: ruptura_instaleap_sera_enviada_quando_item_for_processado_da_fila - "
                         
                         # Retornar status 202 (Accepted) indicando que foi para fila
                         # O fluxo Weni e a ruptura Instaleap serão enviados quando o item for processado da fila
@@ -3400,17 +3555,17 @@ def Run(engine):
                             "type": replacement_method,
                             "sku_original": original_sku,
                             "message": "Item promocional removido - aguardando processamento na fila",
-                            "teste": teste,
+                            "debug": debug,
                         }, status_code=202, content_type="json")
                         return
                     else:
-                        teste += f"processamento_substituicao: push_item_promocional_para_fila_ERRO mensagem={push_result_promocional.get('message', 'Erro desconhecido')} - "
+                        debug += f"processamento_substituicao: push_item_promocional_para_fila_ERRO mensagem={push_result_promocional.get('message', 'Erro desconhecido')} - "
                         # Se o push falhar, continuar processamento normal (fallback)
-                        teste += f"processamento_substituicao: push_falhou_continuando_processamento_normal_item_promocional - "
+                        debug += f"processamento_substituicao: push_falhou_continuando_processamento_normal_item_promocional - "
                 
                 # Se não havia fila ativa antes do push ou push falhou: processar item promocional imediatamente
                 if not fila_ativa_antes_do_push or (push_result_promocional is not None and not push_result_promocional.get("success", False)):
-                    teste += f"processamento_substituicao: processando_item_promocional_imediatamente (sem_fila_ou_push_falhou) - "
+                    debug += f"processamento_substituicao: processando_item_promocional_imediatamente (sem_fila_ou_push_falhou) - "
                     recipient = input_data.get("job", {}).get("recipient", {})
                     phone = recipient.get("phone_number", "")
                     full_name = recipient.get("name", "")
@@ -3420,16 +3575,16 @@ def Run(engine):
                     # Salvar produtos_escolhidos vazio na Weni
                     if phone:
                         urn = format_phone_to_urn(phone)
-                        save_ok, teste_save = save_produtos_escolhidos_to_weni(
+                        save_ok, debug_save = save_produtos_escolhidos_to_weni(
                             urn=urn,
                             produtos_escolhidos=[],  # Lista vazia para itens promocionais (sem substituição)
                             engine=engine,
                         )
-                        teste += teste_save
+                        debug += debug_save
                     
                     # Iniciar fluxo Weni para avisar sobre item promocional removido
-                    teste += f"processamento_substituicao: iniciando_start_weni_flow_item_promocional - "
-                    flow_started, teste = start_weni_flow(
+                    debug += f"processamento_substituicao: iniciando_start_weni_flow_item_promocional - "
+                    flow_started, debug = start_weni_flow(
                         phone=phone,
                         produtos_escolhidos=[],  # Lista vazia para itens promocionais (sem substituição)
                         produto_antigo=produto_antigo,
@@ -3440,42 +3595,36 @@ def Run(engine):
                         first_contact=first_contact,
                         is_promotional=is_promotional,
                         is_journey=False,  # Item promocional não é journey
-                        teste=teste
+                        debug=debug
                     )
-                    teste += f"processamento_substituicao: start_weni_flow_item_promocional_retornou flow_started={flow_started} - "
+                    debug += f"processamento_substituicao: start_weni_flow_item_promocional_retornou flow_started={flow_started} - "
                     if flow_started:
-                        teste += f"processamento_substituicao: fluxo_weni_iniciado_com_sucesso_para_item_promocional - "
+                        debug += f"processamento_substituicao: fluxo_weni_iniciado_com_sucesso_para_item_promocional - "
                     else:
-                        teste += f"processamento_substituicao: erro_ao_iniciar_fluxo_weni_para_item_promocional - "
+                        debug += f"processamento_substituicao: erro_ao_iniciar_fluxo_weni_para_item_promocional - "
                     
             
-            # Enviar ruptura para Instaleap
-            # EXCETO quando for contactConfirm com "SEM OPÇÕES" - nesse caso, apenas o fluxo Weni é enviado
-            is_contact_confirm_sem_opcoes = (
-                (replacement_method == "contactConfirm" or type_of_process == "contactConfirm")
-                and "SEM OPCOES" in error_msg
-                and not is_promotional
-            )
-            
-            if not is_contact_confirm_sem_opcoes:
+            # Enviar ruptura para Instaleap apenas se a jornada desestruturada
+            # não foi acionada neste processamento.
+            if not sent_to_destructured_journey:
                 # Enviar ruptura para Instaleap apenas se não for contactConfirm SEM OPÇÕES
                 if original_sku:
-                    instaleap_success, teste = send_instaleap_external_data(
+                    instaleap_success, debug = send_instaleap_external_data(
                         order_id=client_reference,
                         product_id=original_sku,
                         ruptura_message=error_msg.upper(),
-                        teste=teste
+                        debug=debug
                     )
                     if not instaleap_success:
-                        teste += f"send_instaleap_external_data retornou False para o produto {original_sku} - "
+                        debug += f"send_instaleap_external_data retornou False para o produto {original_sku} - "
                 else:
-                    teste += "send_instaleap_external_data: original_sku está vazio, não foi possível enviar ruptura - "
+                    debug += "send_instaleap_external_data: original_sku está vazio, não foi possível enviar ruptura - "
             else:
-                # ContactConfirm SEM OPÇÕES: não enviar para Instaleap, apenas fluxo Weni foi enviado
-                teste += f"processamento_substituicao: contactConfirm_SEM_OPCOES_nao_enviando_instaleap (apenas_fluxo_weni) - "
+                # Item já encaminhado para jornada desestruturada: não enviar para Instaleap.
+                debug += "processamento_substituicao: jornada_desestruturada_acionada_nao_enviando_instaleap - "
                 instaleap_success = False  # Não foi enviado
             
-            teste += f"processamento_substituicao: preparando_resultado_remocao original_sku={original_sku} instaleap_success={instaleap_success} flow_started={flow_started} - "
+            debug += f"processamento_substituicao: preparando_resultado_remocao original_sku={original_sku} instaleap_success={instaleap_success} flow_started={flow_started} - "
             
             # Marcar SKU como processado quando item promocional for realmente processado
             # (seja imediatamente ou da fila)
@@ -3490,9 +3639,9 @@ def Run(engine):
                         processed_skus = get_processed_skus_from_weni(contact_data, engine)
                         if original_sku not in processed_skus:
                             updated_skus = processed_skus + [str(original_sku)]
-                            teste += f"processamento_substituicao: ANTES_SALVAR_SKU_PROMOCIONAL sku_id={original_sku} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
-                            save_success, teste = update_weni_contact(urn, full_name, updated_skus, engine, order_id=client_reference, teste=teste)
-                            teste += f"processamento_substituicao: DEPOIS_SALVAR_SKU_PROMOCIONAL save_success={save_success} sku_id={original_sku} - "
+                            debug += f"processamento_substituicao: ANTES_SALVAR_SKU_PROMOCIONAL sku_id={original_sku} processed_skus_antes={processed_skus} updated_skus={updated_skus} urn={urn} - "
+                            save_success, debug = update_weni_contact(urn, full_name, updated_skus, engine, order_id=client_reference, debug=debug)
+                            debug += f"processamento_substituicao: DEPOIS_SALVAR_SKU_PROMOCIONAL save_success={save_success} sku_id={original_sku} - "
                             
                             # Verificar se o SKU foi realmente salvo fazendo uma leitura
                             if save_success and urn:
@@ -3501,17 +3650,17 @@ def Run(engine):
                                     if contact_data_verify:
                                         processed_skus_verify = get_processed_skus_from_weni(contact_data_verify, engine)
                                         sku_salvo = str(original_sku) in processed_skus_verify
-                                        teste += f"processamento_substituicao: VERIFICACAO_SALVAMENTO_PROMOCIONAL sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
+                                        debug += f"processamento_substituicao: VERIFICACAO_SALVAMENTO_PROMOCIONAL sku_salvo={sku_salvo} processed_skus_apos_salvar={processed_skus_verify} - "
                                     else:
-                                        teste += f"processamento_substituicao: VERIFICACAO_SALVAMENTO_PROMOCIONAL contact_data_verify=None - "
+                                        debug += f"processamento_substituicao: VERIFICACAO_SALVAMENTO_PROMOCIONAL contact_data_verify=None - "
                                 except Exception as e:
-                                    teste += f"processamento_substituicao: ERRO_VERIFICACAO_SALVAMENTO_PROMOCIONAL={str(e)} - "
+                                    debug += f"processamento_substituicao: ERRO_VERIFICACAO_SALVAMENTO_PROMOCIONAL={str(e)} - "
                             else:
-                                teste += f"processamento_substituicao: NAO_VERIFICOU_SALVAMENTO_PROMOCIONAL save_success={save_success} urn={urn} - "
+                                debug += f"processamento_substituicao: NAO_VERIFICOU_SALVAMENTO_PROMOCIONAL save_success={save_success} urn={urn} - "
                             
-                            teste += f"processamento_substituicao: sku_promocional_marcado_como_processado_agora={original_sku} - "
+                            debug += f"processamento_substituicao: sku_promocional_marcado_como_processado_agora={original_sku} - "
                         else:
-                            teste += f"processamento_substituicao: sku_promocional_ja_estava_marcado_como_processado={original_sku} - "
+                            debug += f"processamento_substituicao: sku_promocional_ja_estava_marcado_como_processado={original_sku} - "
             
             # Preparar resultado para remoção
             result = {
@@ -3519,27 +3668,27 @@ def Run(engine):
                 "type": replacement_method,
                 "action": "removed",
                 "message": "Item removido sem substituição",
-                "teste": teste,
+                "debug": debug,
             }
             if "error" in process_result:
                 result["error"] = process_result["error"]
-                teste += f"processamento_substituicao: erro_incluido_no_resultado={process_result['error']} - "
+                debug += f"processamento_substituicao: erro_incluido_no_resultado={process_result['error']} - "
             
             # Incluir flow_started no resultado se foi iniciado (para itens promocionais)
             if is_promotional:
                 result["flow_started"] = flow_started
-                teste += f"processamento_substituicao: flow_started_incluido_no_resultado={flow_started} - "
+                debug += f"processamento_substituicao: flow_started_incluido_no_resultado={flow_started} - "
             
             # Determinar status code baseado no tipo de erro
             if "nenhuma SKU para verificar" in error_msg:
                 status_code = 409  # Conflict - SKUs já processadas (conflito de estado)
-                teste += f"processamento_substituicao: status_code_definido_409 (skus_ja_processadas) - "
+                debug += f"processamento_substituicao: status_code_definido_409 (skus_ja_processadas) - "
             elif "SEM OPCOES" in error_msg or "VALOR ACIMA" in error_msg or "PROMOCIONAL" in error_msg:
                 status_code = 422  # Unprocessable Entity - regras de negócio impedem processamento
-                teste += f"processamento_substituicao: status_code_definido_422 (regras_negocio) - "
+                debug += f"processamento_substituicao: status_code_definido_422 (regras_negocio) - "
             else:
                 status_code = 400  # Bad Request - erro genérico
-                teste += f"processamento_substituicao: status_code_definido_400 (erro_generico) - "
+                debug += f"processamento_substituicao: status_code_definido_400 (erro_generico) - "
 
             # Remover da fila quando:
             # - houve um PUSH bem-sucedido nesta execução (contato subsequente), OU
@@ -3553,7 +3702,7 @@ def Run(engine):
             # mesmo que client_reference_param esteja preenchido ou tenha havido push.
             #
             # Isso evita que o JSON seja removido da fila antes da Weni concluir a jornada.
-            teste += (
+            debug += (
                 f"processamento_substituicao: verificando_se_deve_remover_da_fila "
                 f"push_result_success={push_result.get('success') if push_result else False} "
                 f"client_reference_param={client_reference_param} "
@@ -3579,13 +3728,13 @@ def Run(engine):
             ):
                 # Para itens promocionais processados (não foi para fila), também fazer pop se veio da fila
                 if is_promotional and client_reference_param is not None:
-                    teste += f"processamento_substituicao: item_promocional_veio_da_fila fazendo_pop - "
-                teste += f"pop_fila: removendo_da_fila_apos_remocao pedido={client_reference} - "
+                    debug += f"processamento_substituicao: item_promocional_veio_da_fila fazendo_pop - "
+                debug += f"pop_fila: removendo_da_fila_apos_remocao pedido={client_reference} - "
                 pop_result = pop_fila_from_codeaction(client_reference, engine)
                 if pop_result.get("success"):
-                    teste += f"pop_fila: SUCESSO pedido={client_reference} - "
+                    debug += f"pop_fila: SUCESSO pedido={client_reference} - "
                 else:
-                    teste += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
+                    debug += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
 
         else:
             status_code = 200 if "produtos_escolhidos" in process_result else 400
@@ -3603,11 +3752,11 @@ def Run(engine):
                         # Usar quantity diretamente (em kg, ponto flutuante) - NÃO usar quantity_in_units
                         chosen_qty = float(chosen.get("quantity", 1) or 1)
 
-                        teste += f"original_sku={original_sku} chosen_sku={chosen_sku} chosen_qty={chosen_qty} (kg) - "
+                        debug += f"original_sku={original_sku} chosen_sku={chosen_sku} chosen_qty={chosen_qty} (kg) - "
 
 
                         if process_result.get("talk_to_client") == False:
-                            teste += " process_result.get('talk_to_client', False) - "
+                            debug += " process_result.get('talk_to_client', False) - "
                             # Regra 1: auto-substituir, sem Weni
                             send_replacement_suggestion_to_zaffari(
                                 order_id=client_reference,
@@ -3620,25 +3769,25 @@ def Run(engine):
                             # Para auto-substituição em replacementBySimilar, o item não vai para a fila
                             # Só fazer pop se veio da fila (client_reference_param) e foi para a fila em algum momento anterior
                             # Para replacementBySimilar puro (sem contactConfirm), push_result sempre será None porque não faz push
-                            teste += f"processamento_substituicao: sucesso_auto_substituicao - replacementBySimilar_nao_vai_para_fila push_result={push_result is not None} client_reference_param={client_reference_param} - "
+                            debug += f"processamento_substituicao: sucesso_auto_substituicao - replacementBySimilar_nao_vai_para_fila push_result={push_result is not None} client_reference_param={client_reference_param} - "
                             # Apenas fazer pop se veio da fila (foi processado anteriormente e estava aguardando)
                             if client_reference_param is not None:
-                                teste += f"pop_fila: removendo_da_fila_apos_auto_substituicao pedido={client_reference} - "
+                                debug += f"pop_fila: removendo_da_fila_apos_auto_substituicao pedido={client_reference} - "
                                 pop_result = pop_fila_from_codeaction(client_reference, engine)
                                 if pop_result.get("success"):
-                                    teste += f"pop_fila: SUCESSO pedido={client_reference} - "
+                                    debug += f"pop_fila: SUCESSO pedido={client_reference} - "
                                 else:
-                                    teste += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
+                                    debug += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
                             
                             engine.result.set({
                                 "Status": "Success",
                                 "type": replacement_method,
                                 "action": "auto_substituted",
-                                "teste": teste,
+                                "debug": debug,
                             }, status_code=200, content_type="json")
                             return
                         elif process_result.get("talk_to_client") == True:
-                            teste += "process_result.get('talk_to_client', True) - "
+                            debug += "process_result.get('talk_to_client', True) - "
                             # Regra 2: até +20% -> Enviar mensagem para cliente para confirmação
                             recipient = input_data.get("job", {}).get("recipient", {})
                             phone = recipient.get("phone_number", "")
@@ -3648,15 +3797,15 @@ def Run(engine):
                             # Sempre atualizar campos de contato (items_partN) antes de disparar fluxo na Weni
                             if phone:
                                 urn = format_phone_to_urn(phone)
-                                save_ok, teste_save = save_produtos_escolhidos_to_weni(
+                                save_ok, debug_save = save_produtos_escolhidos_to_weni(
                                     urn=urn,
                                     produtos_escolhidos=process_result["produtos_escolhidos"],
                                     engine=engine,
                                 )
-                                teste += teste_save
+                                debug += debug_save
 
-                            teste += f"replacementBySimilar_talk_to_client_True: chamando_start_weni_flow - "
-                            flow_started, teste = start_weni_flow(
+                            debug += f"replacementBySimilar_talk_to_client_True: chamando_start_weni_flow - "
+                            flow_started, debug = start_weni_flow(
                                 phone=phone,
                                 produtos_escolhidos=process_result["produtos_escolhidos"],
                                 produto_antigo=process_result.get("produto_antigo", {}),
@@ -3667,33 +3816,33 @@ def Run(engine):
                                 first_contact=first_contact,
                                 is_promotional=False,  # Não é promocional neste caso
                                 is_journey=False,  # replacementBySimilar não é journey
-                                teste=teste
+                                debug=debug
                             )
-                            teste += f"replacementBySimilar_talk_to_client_True: start_weni_flow_retornou flow_started={flow_started} - "
+                            debug += f"replacementBySimilar_talk_to_client_True: start_weni_flow_retornou flow_started={flow_started} - "
                         elif process_result.get("remove") == True:
-                            teste += "process_result.get('remove', True) - "
+                            debug += "process_result.get('remove', True) - "
                             # Regra 3: acima de +20% -> informar ruptura (AUT REMOÇÃO), sem Weni
                             if original_sku:
-                                instaleap_success, teste = send_instaleap_external_data(
+                                instaleap_success, debug = send_instaleap_external_data(
                                     order_id=client_reference,
                                     product_id=original_sku,
                                     ruptura_message="SUBST NAO ADIC. - VALOR ACIMA",
-                                    teste=teste
+                                    debug=debug
                                 )
                                 if not instaleap_success:
-                                    teste += f"send_instaleap_external_data retornou False para o produto {original_sku} - "
+                                    debug += f"send_instaleap_external_data retornou False para o produto {original_sku} - "
                             else:
-                                teste += f"send_instaleap_external_data: original_sku está vazio, não foi possível enviar ruptura - "
+                                debug += f"send_instaleap_external_data: original_sku está vazio, não foi possível enviar ruptura - "
                             
                             # Remover da fila após processamento (mesmo sendo ruptura, o item foi processado)
-                            teste += f"processamento_substituicao: ruptura_verificando_remocao_fila push_result_success={push_result.get('success') if push_result else False} client_reference_param={client_reference_param} - "
+                            debug += f"processamento_substituicao: ruptura_verificando_remocao_fila push_result_success={push_result.get('success') if push_result else False} client_reference_param={client_reference_param} - "
                             if (push_result and push_result.get("success")) or client_reference_param is not None:
-                                teste += f"pop_fila: removendo_da_fila_apos_ruptura pedido={client_reference} - "
+                                debug += f"pop_fila: removendo_da_fila_apos_ruptura pedido={client_reference} - "
                                 pop_result = pop_fila_from_codeaction(client_reference, engine)
                                 if pop_result.get("success"):
-                                    teste += f"pop_fila: SUCESSO pedido={client_reference} - "
+                                    debug += f"pop_fila: SUCESSO pedido={client_reference} - "
                                 else:
-                                    teste += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
+                                    debug += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
                             
                             engine.result.set({
                                 "Status": "Success",
@@ -3705,38 +3854,38 @@ def Run(engine):
                             return
                         else:
                             # talk_to_client não definido ou valor inesperado
-                            teste += f"processamento_substituicao: talk_to_client_nao_definido={process_result.get('talk_to_client')} - "
+                            debug += f"processamento_substituicao: talk_to_client_nao_definido={process_result.get('talk_to_client')} - "
                     except Exception:
                         pass
 
                 
                 elif replacement_method == "contactConfirm" or type_of_process == "contactConfirm":
-                    teste += "contactConfirm e type_of_process == contactConfirm - "
-                    teste += f"contactConfirm: verificando_start_flow start_flow={start_flow} - "
+                    debug += "contactConfirm e type_of_process == contactConfirm - "
+                    debug += f"contactConfirm: verificando_start_flow start_flow={start_flow} - "
                     
                     # Se start_flow for True disparar fluxo
                     if start_flow:
-                        teste += f"contactConfirm: start_flow=True iniciando_processo_fluxo - "
+                        debug += f"contactConfirm: start_flow=True iniciando_processo_fluxo - "
                         recipient = input_data.get("job", {}).get("recipient", {})
                         phone = recipient.get("phone_number", "")
                         full_name = recipient.get("name", "")   
                         commerce_id = vtex_order.get("salesChannel", "") if vtex_order else ""
                         
-                        teste += f"contactConfirm: dados_cliente phone={bool(phone)} full_name={bool(full_name)} commerce_id={commerce_id} - "
+                        debug += f"contactConfirm: dados_cliente phone={bool(phone)} full_name={bool(full_name)} commerce_id={commerce_id} - "
                         
                         # Sempre atualizar campos de contato (items_partN) antes de disparar fluxo na Weni
                         if phone:
                             urn = format_phone_to_urn(phone)
-                            teste += f"contactConfirm: salvando_produtos_escolhidos_na_weni - "
-                            save_ok, teste_save = save_produtos_escolhidos_to_weni(
+                            debug += f"contactConfirm: salvando_produtos_escolhidos_na_weni - "
+                            save_ok, debug_save = save_produtos_escolhidos_to_weni(
                                 urn=urn,
                                 produtos_escolhidos=process_result["produtos_escolhidos"],
                                 engine=engine,
                             )
-                            teste += teste_save
-                            teste += f"contactConfirm: produtos_escolhidos_salvos save_ok={save_ok} - "
+                            debug += debug_save
+                            debug += f"contactConfirm: produtos_escolhidos_salvos save_ok={save_ok} - "
                         else:
-                            teste += f"contactConfirm: AVISO phone_vazio_nao_pode_salvar_produtos - "
+                            debug += f"contactConfirm: AVISO phone_vazio_nao_pode_salvar_produtos - "
                         
                         # Executar start_weni_flow
                         # is_journey=True apenas quando é "SEM OPÇÕES" (remove=True)
@@ -3745,8 +3894,8 @@ def Run(engine):
                         is_sem_opcoes = len(produtos_escolhidos_list) == 0
                         is_journey_value = is_sem_opcoes  # True apenas quando SEM OPÇÕES
                         
-                        teste += f"contactConfirm: chamando_start_weni_flow is_sem_opcoes={is_sem_opcoes} is_journey={is_journey_value} - "
-                        flow_started, teste = start_weni_flow(
+                        debug += f"contactConfirm: chamando_start_weni_flow is_sem_opcoes={is_sem_opcoes} is_journey={is_journey_value} - "
+                        flow_started, debug = start_weni_flow(
                             phone=phone,
                             produtos_escolhidos=produtos_escolhidos_list,
                             produto_antigo=process_result.get("produto_antigo", {}),
@@ -3757,21 +3906,21 @@ def Run(engine):
                             first_contact=first_contact,
                             is_promotional=False,
                             is_journey=is_journey_value,  # True apenas quando SEM OPÇÕES
-                            teste=teste
+                            debug=debug
                         )
-                        teste += f"contactConfirm: start_weni_flow_retornou flow_started={flow_started} - "
+                        debug += f"contactConfirm: start_weni_flow_retornou flow_started={flow_started} - "
                     else:
-                        teste += f"contactConfirm: start_flow=False fluxo_nao_disparado - "
+                        debug += f"contactConfirm: start_flow=False fluxo_nao_disparado - "
                         flow_started = False
                     
             
             # Preparar resultado com mensagem de erro específica se houver
-            teste += f"processamento_substituicao: preparando_resultado_final flow_started={flow_started} status_code={status_code} type={replacement_method} - "
+            debug += f"processamento_substituicao: preparando_resultado_final flow_started={flow_started} status_code={status_code} type={replacement_method} - "
             result = {
                 "Status": "Success" if status_code == 200 else "Error",
                 "type": replacement_method,
                 "flow_started": flow_started,
-                "teste": teste,
+                "debug": debug,
             }
             
             # Incluir mensagem de erro específica quando houver
@@ -3788,7 +3937,7 @@ def Run(engine):
                         "type": replacement_method,
                         "error": process_result.get("error", "Erro desconhecido no processamento"),
                         "flow_started": flow_started,
-                        "teste": teste,
+                        "debug": debug,
                     }
             
     else:
@@ -3797,7 +3946,7 @@ def Run(engine):
             "Status": "Error",
             "type": replacement_method or "unknown",
             "error": f"Método de substituição inválido ou não configurado: {replacement_method}",
-            "teste": teste,
+            "debug": debug,
         }
         status_code = 400
     
@@ -3807,7 +3956,7 @@ def Run(engine):
             "Status": "Error",
             "type": replacement_method or "unknown",
             "error": "Erro inesperado: result não foi definido",
-            "teste": teste,
+            "debug": debug,
         }
         status_code = 500
     
@@ -3820,19 +3969,19 @@ def Run(engine):
         
         if is_contact_confirm_method:
             # Para contactConfirm, o fluxo Weni faz o pop automaticamente no final
-            teste += f"processamento_substituicao: sucesso_contactConfirm_nao_fazendo_pop (fluxo_weni_fara_pop) - "
+            debug += f"processamento_substituicao: sucesso_contactConfirm_nao_fazendo_pop (fluxo_weni_fara_pop) - "
         else:
             # Para outros métodos (replacementBySimilar, etc), fazer pop aqui
-            teste += f"processamento_substituicao: sucesso_detectado_verificando_remocao_fila push_result_success={push_result.get('success') if push_result else False} client_reference_param={client_reference_param} - "
+            debug += f"processamento_substituicao: sucesso_detectado_verificando_remocao_fila push_result_success={push_result.get('success') if push_result else False} client_reference_param={client_reference_param} - "
             if (push_result and push_result.get("success")) or client_reference_param is not None:
-                teste += f"pop_fila: removendo_da_fila_apos_sucesso pedido={client_reference} - "
+                debug += f"pop_fila: removendo_da_fila_apos_sucesso pedido={client_reference} - "
                 pop_result = pop_fila_from_codeaction(client_reference, engine)
                 if pop_result.get("success"):
-                    teste += f"pop_fila: SUCESSO pedido={client_reference} - "
+                    debug += f"pop_fila: SUCESSO pedido={client_reference} - "
                 else:
-                    teste += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
+                    debug += f"pop_fila: ERRO pedido={client_reference} mensagem={pop_result.get('message', 'Erro desconhecido')} - "
     
-    teste += f"processamento_substituicao: retornando_resultado_final Status={result.get('Status')} type={result.get('type')} action={result.get('action', 'N/A')} status_code={status_code} - "
-    result["teste"] = teste  # Garantir que teste está sempre no resultado
+    debug += f"processamento_substituicao: retornando_resultado_final Status={result.get('Status')} type={result.get('type')} action={result.get('action', 'N/A')} status_code={status_code} - "
+    result["debug"] = debug  # Garantir que debug está sempre no resultado
     engine.result.set(result, status_code=status_code, content_type="json")
     return

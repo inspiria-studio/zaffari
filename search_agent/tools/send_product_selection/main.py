@@ -22,7 +22,7 @@ class SendProductSelection(Tool):
         - Se preço_sub <= preço_orig: quantidade_sub = quantidade_orig
         - Se preço_sub > preço_orig: quantidade_sub = valor_total_orig / preço_sub
         - Valor total NUNCA pode ultrapassar o original
-        - Preço unitário pode ser no máximo 20% maior (validação opcional - warning)
+        - Preço unitário pode ser no máximo 20% maior 
         
         Args:
             original_price: Preço unitário do produto original
@@ -365,7 +365,7 @@ class SendProductSelection(Tool):
         """
         Envia sugestão de substituição escolhida para a API da Zaffari (ambiente QA).
         
-        POST https://hml-api.zaffari.com.br/ecommerce/integration-matrix/api/v1/flow/orderProductReplacementSugestion
+        POST https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/flow/orderProductReplacementSugestion
         Body: {
           "orderId": "string",
           "productIdOriginal": "string",
@@ -383,7 +383,7 @@ class SendProductSelection(Tool):
             bool: True se o envio foi bem-sucedido, False caso contrário
         """
         try:
-            base_url = "https://hml-api.zaffari.com.br/ecommerce/integration-matrix"
+            base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
             url = f"{base_url}/api/v1/flow/orderProductReplacementSugestion"
             
             payload = {
@@ -395,7 +395,7 @@ class SendProductSelection(Tool):
             
             headers = {
                 "Content-Type": "application/json",
-                "Ocp-Apim-Subscription-Key": "5400fb5a63a945b1a2bbab6086a94c71"
+                "Ocp-Apim-Subscription-Key": "df1cbce4af78460895d0299a209d0d5c"
             }
             
             print(f"Enviando sugestão de substituição: {json.dumps(payload, indent=2)}")
@@ -431,7 +431,7 @@ class SendProductSelection(Tool):
         """
         Envia informação de ruptura (remoção sem substituição) para a API da Zaffari (Instaleap).
         
-        POST https://hml-api.zaffari.com.br/ecommerce/integration-matrix/api/v1/flow/instaleapExternalData
+        POST https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/flow/instaleapExternalData
         Body:
         {
           "orderId": "string",
@@ -450,7 +450,7 @@ class SendProductSelection(Tool):
         order_id = str(order_id).strip() if order_id else ""
         
         try:
-            base_url = "https://hml-api.zaffari.com.br/ecommerce/integration-matrix"
+            base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
             url = f"{base_url}/api/v1/flow/instaleapExternalData"
             payload = {
                 "orderId": order_id,
@@ -459,7 +459,7 @@ class SendProductSelection(Tool):
             }
             headers = {
                 "Content-Type": "application/json",
-                "Ocp-Apim-Subscription-Key": "5400fb5a63a945b1a2bbab6086a94c71"
+                "Ocp-Apim-Subscription-Key": "df1cbce4af78460895d0299a209d0d5c"
             }
             
             print(f"Enviando ruptura Instaleap: {json.dumps(payload, ensure_ascii=False)}")

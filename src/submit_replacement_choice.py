@@ -19,7 +19,7 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
     """
     Envia sugestão de substituição escolhida para a API da Zaffari (ambiente QA).
 
-    POST https://hml-api.zaffari.com.br/ecommerce/integration-matrix/api/v1/flow/orderProductReplacementSugestion
+    POST https://hml-api.zaffari.com.br/weni/integration-vtex/api/v1/flow/orderProductReplacementSugestion
     Body:
     {
       "orderId": "string",
@@ -29,7 +29,7 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
     }
     """
     try:
-        base_url = "https://hml-api.zaffari.com.br/ecommerce/integration-matrix"
+        base_url = "https://hml-api.zaffari.com.br/weni/integration-vtex"
         url = f"{base_url}/api/v1/flow/orderProductReplacementSugestion"
         payload = {
             "orderId": str(order_id or ""),
@@ -40,7 +40,7 @@ def send_replacement_suggestion_to_zaffari(order_id, product_id_original, produc
         engine.log.debug(f"payload: {payload}")
         headers = {
             "Content-Type": "application/json",
-            "Ocp-Apim-Subscription-Key": "5400fb5a63a945b1a2bbab6086a94c71"
+            "Ocp-Apim-Subscription-Key": "df1cbce4af78460895d0299a209d0d5c"
         }
         engine.log.debug(f"Enviando requisição para: {url}")
         resp = requests.post(url, json=payload, headers=headers, timeout=30)
